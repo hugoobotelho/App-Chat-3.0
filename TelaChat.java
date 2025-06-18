@@ -97,8 +97,8 @@ public class TelaChat {
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem;
             // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
             for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { //enviar para cada peer do grupo, a mensagem.
-              MensagensGruposPeer mensagensGruposPeer = new MensagensGruposPeer(membro.getEndereco().getHostAddress(), 6789);
-              mensagensGruposPeer.enviarMensagem(mensagemFormatada);
+              EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(membro.getEndereco().getHostAddress(), 6789);
+              enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
             }
 
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));

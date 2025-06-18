@@ -5,10 +5,12 @@ import java.util.Map;
 public class PeerUDP {
   private final GrupoManager grupoManager;
   private final Map<String, Usuario> usuarios;
+  Principal app; 
 
-  public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios) {
+  public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Principal app) {
     this.grupoManager = grupoManager;
     this.usuarios = usuarios;
+    this.app = app;
   }
 
   /*
@@ -96,15 +98,17 @@ public class PeerUDP {
           // }
 
           // Reencaminha a mensagem para todos os membros do grupo, exceto o remetente
-          for (Usuario usuario : grupoManager.obterMembros(nomeGrupo)) {
-            if (!usuario.equals(remetente)) {
-              InetAddress enderecoCliente = usuario.getEndereco();
-              int portaCliente = usuario.getPorta();
-              byte[] dadosSaida = String.format("SEND|%s|%s|%s", nomeGrupo, nomeUsuario, conteudoMensagem).getBytes();
-              DatagramPacket pacoteResposta = new DatagramPacket(dadosSaida, dadosSaida.length, enderecoCliente, 9876);
-              servidorSocket.send(pacoteResposta);
-            }
-          }
+          // for (Usuario usuario : grupoManager.obterMembros(nomeGrupo)) {
+          //   if (!usuario.equals(remetente)) {
+          //     InetAddress enderecoCliente = usuario.getEndereco();
+          //     int portaCliente = usuario.getPorta();
+          //     byte[] dadosSaida = String.format("SEND|%s|%s|%s", nomeGrupo, nomeUsuario, conteudoMensagem).getBytes();
+          //     DatagramPacket pacoteResposta = new DatagramPacket(dadosSaida, dadosSaida.length, enderecoCliente, 9876);
+          //     servidorSocket.send(pacoteResposta);
+          //   }
+          // }
+
+          app.processarMensagemRecebida(mensagemRecebida);
         } else {
           System.err.println("Tipo de mensagem desconhecido: " + tipoMensagem);
         }

@@ -26,7 +26,7 @@ public class Principal extends Application {
   private String nomeUsuario; // Nome do usuário conectado
   private String ipServidor;
   private GruposPeer gruposPeer; // Instância do cliente TCP
-  private MensagensGruposPeer mensagensGrupoPeer; // Instância do cliente UDP
+  private EnviarMensagemGrupo enviarMensagemGrupo; // Instância do cliente UDP
   private static Set<String> peersConhecidos;
   private Principal app;
   // private DescobrirServidores descobrirServidores;
@@ -54,8 +54,8 @@ public class Principal extends Application {
 
     // Configura o evento de encerramento do aplicativo
     primaryStage.setOnCloseRequest(t -> {
-      if (mensagensGrupoPeer != null) {
-        mensagensGrupoPeer.fechar(); // Fecha o cliente UDP
+      if (enviarMensagemGrupo != null) {
+        enviarMensagemGrupo.fechar(); // Fecha o cliente UDP
       }
       Platform.exit();
       System.exit(0);
@@ -108,20 +108,20 @@ public class Principal extends Application {
    * conexão.
    * Retorno: void
    */
-  public void criarClienteUDP(String ipServidor, int porta) {
-    try {
-      if (mensagensGrupoPeer != null) {
-        mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servidor caso o usuario mude na tela de
-                                              // configuracoes
-      } else {
-        mensagensGrupoPeer = new MensagensGruposPeer(ipServidor, porta); // Inicializa o cliente UDP
-      }
-      System.out.println("Cliente UDP criado e conectado ao servidor " + ipServidor + ":" + porta);
-      iniciarThreadRecebimentoUDP(); // Inicia a thread para receber mensagens via UDP
-    } catch (Exception e) {
-      System.err.println("Erro ao criar ClienteUDP: " + e.getMessage());
-    }
-  }
+  // public void iniciarEscutaDeMensagens(String ipServidor, int porta) {
+  //   try {
+  //     if (mensagensGrupoPeer != null) {
+  //       mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servidor caso o usuario mude na tela de
+  //                                             // configuracoes
+  //     } else {
+  //       mensagensGrupoPeer = new MensagensGruposPeer(ipServidor, porta); // Inicializa o cliente UDP
+  //     }
+  //     System.out.println("Cliente UDP criado e conectado ao servidor " + ipServidor + ":" + porta);
+  //     iniciarThreadRecebimentoUDP(); // Inicia a thread para receber mensagens via UDP
+  //   } catch (Exception e) {
+  //     System.err.println("Erro ao criar ClienteUDP: " + e.getMessage());
+  //   }
+  // }
 
   /*
    * ***************************************************************
@@ -131,21 +131,21 @@ public class Principal extends Application {
    * Parametros: sem parâmetros.
    * Retorno: void
    */
-  private void iniciarThreadRecebimentoUDP() {
-    new Thread(() -> {
-      try {
-        while (true) {
-          String mensagemRecebida = mensagensGrupoPeer.receberMensagem(); // Aguarda mensagens do servidor
-          System.out.println("Mensagem recebida via UDP: " + mensagemRecebida);
+  // private void iniciarThreadRecebimentoUDP() {
+  //   new Thread(() -> {
+  //     try {
+  //       while (true) {
+  //         String mensagemRecebida = mensagensGrupoPeer.receberMensagem(); // Aguarda mensagens do servidor
+  //         System.out.println("Mensagem recebida via UDP: " + mensagemRecebida);
 
-          // Criar uma thread para processar e renderizar a mensagem recebida
-          new Thread(() -> processarMensagemRecebida(mensagemRecebida)).start();
-        }
-      } catch (Exception e) {
-        System.err.println("Erro ao receber mensagem UDP: " + e.getMessage());
-      }
-    }).start();
-  }
+  //         // Criar uma thread para processar e renderizar a mensagem recebida
+  //         new Thread(() -> processarMensagemRecebida(mensagemRecebida)).start();
+  //       }
+  //     } catch (Exception e) {
+  //       System.err.println("Erro ao receber mensagem UDP: " + e.getMessage());
+  //     }
+  //   }).start();
+  // }
 
   /*
    * ***************************************************************
@@ -155,7 +155,7 @@ public class Principal extends Application {
    * Parametros: String mensagemRecebida - conteúdo da mensagem.
    * Retorno: void
    */
-  private void processarMensagemRecebida(String mensagemRecebida) {
+  public void processarMensagemRecebida(String mensagemRecebida) {
     try {
       // Separar os campos da mensagem
       String[] partes = mensagemRecebida.split("\\|");
@@ -209,8 +209,8 @@ public class Principal extends Application {
   * Parametros: sem parâmetros.
   * Retorno: ClienteUDP
   *************************************************************** */
-  public MensagensGruposPeer getMensagensGruposPeer() {
-    return mensagensGrupoPeer;
+  public EnviarMensagemGrupo getMensagensGruposPeer() {
+    return enviarMensagemGrupo;
   }
   /* ***************************************************************
   * Metodo: setNomeUsuario
@@ -236,11 +236,11 @@ public class Principal extends Application {
   * Parametros: String ip - IP do servidor.
   * Retorno: void
   *************************************************************** */
-  public void setIpServidor(String ip) {
-    this.ipServidor = ip;
-    criarClienteUDP(ip, 6789); // so atualiza o ip do servidor do cliente UDP pois no tcp ja foi atualizado
-                               // quando caiu no catch e elegeu um novo servidor
-  }
+  // public void setIpServidor(String ip) {
+  //   this.ipServidor = ip;
+  //   criarClienteUDP(ip, 6789); // so atualiza o ip do servidor do cliente UDP pois no tcp ja foi atualizado
+  //                              // quando caiu no catch e elegeu um novo servidor
+  // }
   /* ***************************************************************
   * Metodo: getIpServidor
   * Funcao: Retorna o IP atual do servidor.

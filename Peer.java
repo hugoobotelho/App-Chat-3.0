@@ -30,7 +30,7 @@ public class Peer {
 
     this.app = app;
 
-    
+
     System.out.println(app.getPeersConhecidos());
 
     peersConhecidos = app.getPeersConhecidos();
@@ -46,7 +46,7 @@ public class Peer {
 
     // Inicia o peer UDP em uma thread separada
     Thread peerUDPThread = new Thread(() -> {
-      PeerUDP peerUDP = new PeerUDP(grupoManager, usuarios);
+      PeerUDP peerUDP = new PeerUDP(grupoManager, usuarios, app);
       peerUDP.iniciar();
     });
 
