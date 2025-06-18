@@ -27,7 +27,7 @@ public class Principal extends Application {
   private String ipServidor;
   private GruposPeer gruposPeer; // Instância do cliente TCP
   private MensagensGruposPeer mensagensGrupoPeer; // Instância do cliente UDP
-  private Set<String> peersConhecidos;
+  private static Set<String> peersConhecidos;
   private Principal app;
   // private DescobrirServidores descobrirServidores;
   private Peer peer;
@@ -39,6 +39,10 @@ public class Principal extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+
+    app = new Principal();
+
+    peersConhecidos = new HashSet<>();
 
     peer = new Peer(app);
 
@@ -66,7 +70,6 @@ public class Principal extends Application {
     // Centralizando o layout da TelaInicio
     root.setAlignment(telaInicio.getLayout(), javafx.geometry.Pos.CENTER);
 
-    // peersConhecidos = new HashSet<>();
 
     // descobrirServidores = new DescobrirServidores(this);
     // descobrirServidores.iniciarSincronizacao(); // descobre os servidores da rede e armazena em servidores conhecidos

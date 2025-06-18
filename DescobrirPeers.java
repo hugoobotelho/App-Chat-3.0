@@ -10,10 +10,10 @@ public class DescobrirPeers {
   private static final String broadCast = obterBroadcast();
   private static final int timeOutMs = 2000;
   private static final int intervaloDeSincronizacao = 5000; // Tempo entre sincronizações (5s)
-  private Peer app;
+  private Principal app;
   private InetAddress ipLocal;
 
-  DescobrirPeers(Peer app) {
+  DescobrirPeers(Principal app) {
     this.app = app;
     try {
       this.ipLocal = InetAddress.getLocalHost();

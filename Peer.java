@@ -17,7 +17,7 @@ import java.util.Set;
 public class Peer {
 
   private static final Map<String, Usuario> usuarios = new HashMap<>(); // Gerencia usuários
-  private static Set<String> peersConhecidos;
+  private Set<String> peersConhecidos;
   private static DescobrirPeers descobrirPeers;
   private static Peer peer;
   private Principal app;
@@ -30,14 +30,19 @@ public class Peer {
 
     this.app = app;
 
+    
+    System.out.println(app.getPeersConhecidos());
+
+    peersConhecidos = app.getPeersConhecidos();
+
     // peer = new Peer(app);
 
-    peersConhecidos = new HashSet<>();
+    // peersConhecidos = new HashSet<>();
 
-    descobrirPeers = new DescobrirPeers(peer);
+    descobrirPeers = new DescobrirPeers(app);
     descobrirPeers.iniciarDescobrimento();
 
-    grupoManager = new GrupoManager(peer);
+    grupoManager = new GrupoManager(this);
 
     // Inicia o peer UDP em uma thread separada
     Thread peerUDPThread = new Thread(() -> {
