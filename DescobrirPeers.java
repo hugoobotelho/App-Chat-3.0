@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 
 public class DescobrirPeers {
   private final static int porta = 2025;
-  private static final String broadCast = obterBroadcast();
+  private static final String broadCast = "255.255.255.255";
   private static final int timeOutMs = 2000;
   private static final int intervaloDeSincronizacao = 5000; // Tempo entre sincronizações (5s)
   private Principal app;
@@ -63,14 +63,18 @@ public class DescobrirPeers {
           byte[] buffer = new byte[1024];
           DatagramPacket resposta = new DatagramPacket(buffer, buffer.length);
           try {
+
             socket.setSoTimeout(timeOutMs);
             socket.receive(resposta);
+            String msg1 = new String(resposta.getData(), 0, resposta.getLength());
 
-            if (!resposta.getAddress().equals(ipLocal)) { // ignora se foi ele mesmo que se respondeu
+            System.out.println("Recebida de " + resposta.getAddress() + " a mensagem eh: " + msg1);
+
+            if (!resposta.getAddress().getHostAddress().equals(ipLocal.getHostAddress())) { // ignora se foi ele mesmo
+                                                                                            // que se respondeu
               String msg = new String(resposta.getData(), 0, resposta.getLength());
-
               if (msg.equals("IMALIVE")) {
-                app.setPeersConhecidos(resposta.getAddress().getHostAddress()); //adiciona o ip do servidor descoberto
+                app.setPeersConhecidos(resposta.getAddress().getHostAddress()); // adiciona o ip do servidor descoberto
                 System.out.println("Resposta recebida de " + resposta.getAddress());
               }
             }
@@ -108,17 +112,22 @@ public class DescobrirPeers {
 
         String mensagem = new String(pacoteRecebido.getData(), 0, pacoteRecebido.getLength());
 
-        // if (mensagem.equals("SINC")) {
-        //   String horaAtual = app.getHorarioMaquina().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        //   byte[] resposta = ("HORA|" + horaAtual).getBytes();
+        System.out.println("Recebi mensagem de " + pacoteRecebido.getAddress().getHostAddress() + " : " + mensagem);
 
-        //   DatagramPacket pacoteResposta = new DatagramPacket(resposta, resposta.length, pacoteRecebido.getAddress(),
-        //       pacoteRecebido.getPort());
-        //   socket.send(pacoteResposta);
-        //   System.out.println("Respondi com meu horário: " + horaAtual);
+        // if (mensagem.equals("SINC")) {
+        // String horaAtual =
+        // app.getHorarioMaquina().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        // byte[] resposta = ("HORA|" + horaAtual).getBytes();
+
+        // DatagramPacket pacoteResposta = new DatagramPacket(resposta, resposta.length,
+        // pacoteRecebido.getAddress(),
+        // pacoteRecebido.getPort());
+        // socket.send(pacoteResposta);
+        // System.out.println("Respondi com meu horário: " + horaAtual);
 
         // } else
-         if (mensagem.equals("AREYOUALIVE")) {
+        if (mensagem.equals("AREYOUALIVE")
+            && !pacoteRecebido.getAddress().getHostAddress().equals(ipLocal.getHostAddress())) {
           byte[] resposta = ("IMALIVE").getBytes();
 
           DatagramPacket pacoteResposta = new DatagramPacket(resposta, resposta.length, pacoteRecebido.getAddress(),
