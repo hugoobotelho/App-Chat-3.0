@@ -2,7 +2,7 @@ import java.net.*;
 
 public class EnviarMensagemGrupo {
   private final DatagramSocket clienteSocket;
-  private final DatagramSocket clienteSocket1;
+  // private final DatagramSocket clienteSocket1;
   private InetAddress enderecoServidor;
   private final int portaServidor;
 
@@ -10,7 +10,7 @@ public class EnviarMensagemGrupo {
     this.clienteSocket = new DatagramSocket(); // Socket para comunicação UDP
     this.enderecoServidor = InetAddress.getByName(ipServidor); // Endereço do servidor
     this.portaServidor = portaServidor;
-    this.clienteSocket1 = new DatagramSocket(6789); // Escolha uma porta fixada
+    // this.clienteSocket1 = new DatagramSocket(1234); // Escolha uma porta fixada
   }
 
 

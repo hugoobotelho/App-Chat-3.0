@@ -97,7 +97,7 @@ public class TelaChat {
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem;
             // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
             for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { //enviar para cada peer do grupo, a mensagem.
-              EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(membro.getEndereco().getHostAddress(), 6789);
+              EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(membro.getEndereco().getHostAddress(), 1234);
               enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
             }
 

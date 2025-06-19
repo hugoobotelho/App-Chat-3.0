@@ -26,7 +26,7 @@ public class Principal extends Application {
   private String nomeUsuario; // Nome do usuário conectado
   private String ipServidor;
   private GruposPeer gruposPeer; // Instância do cliente TCP
-  private EnviarMensagemGrupo enviarMensagemGrupo; // Instância do cliente UDP
+  // private EnviarMensagemGrupo enviarMensagemGrupo; // Instância do cliente UDP
   private static Set<String> peersConhecidos;
   private Principal app;
   // private DescobrirServidores descobrirServidores;
@@ -40,11 +40,11 @@ public class Principal extends Application {
   @Override
   public void start(Stage primaryStage) {
 
-    app = new Principal();
+    // app = new Principal();
 
     peersConhecidos = new HashSet<>();
 
-    peer = new Peer(app);
+    peer = new Peer(this);
 
     Scene scene = new Scene(root, 390, 644);
     primaryStage.setScene(scene);
@@ -54,9 +54,9 @@ public class Principal extends Application {
 
     // Configura o evento de encerramento do aplicativo
     primaryStage.setOnCloseRequest(t -> {
-      if (enviarMensagemGrupo != null) {
-        enviarMensagemGrupo.fechar(); // Fecha o cliente UDP
-      }
+      // if (enviarMensagemGrupo != null) {
+      // enviarMensagemGrupo.fechar(); // Fecha o cliente UDP
+      // }
       Platform.exit();
       System.exit(0);
     });
@@ -70,10 +70,9 @@ public class Principal extends Application {
     // Centralizando o layout da TelaInicio
     root.setAlignment(telaInicio.getLayout(), javafx.geometry.Pos.CENTER);
 
-
     // descobrirServidores = new DescobrirServidores(this);
-    // descobrirServidores.iniciarSincronizacao(); // descobre os servidores da rede e armazena em servidores conhecidos
-
+    // descobrirServidores.iniciarSincronizacao(); // descobre os servidores da rede
+    // e armazena em servidores conhecidos
 
   }
 
@@ -86,17 +85,17 @@ public class Principal extends Application {
    * Retorno: void
    */
   // public void criarClientes(String nomeUsuario) {
-  //   // this.ipServidor = ipServidor;
-  //   this.nomeUsuario = nomeUsuario;
+  // // this.ipServidor = ipServidor;
+  // this.nomeUsuario = nomeUsuario;
 
-  //   if (ipServidor != null) {
-  //     System.out.println("Cliente criado!");
-  //     // Criando e conectando o cliente TCP
-  //     gruposPeer = new GruposPeer(ipServidor, 6789, this);
+  // if (ipServidor != null) {
+  // System.out.println("Cliente criado!");
+  // // Criando e conectando o cliente TCP
+  // gruposPeer = new GruposPeer(ipServidor, 6789, this);
 
-  //     // Criando e conectando o cliente UDP
-  //     criarClienteUDP(ipServidor, 6789);
-  //   }
+  // // Criando e conectando o cliente UDP
+  // criarClienteUDP(ipServidor, 6789);
+  // }
   // }
 
   /*
@@ -109,18 +108,22 @@ public class Principal extends Application {
    * Retorno: void
    */
   // public void iniciarEscutaDeMensagens(String ipServidor, int porta) {
-  //   try {
-  //     if (mensagensGrupoPeer != null) {
-  //       mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servidor caso o usuario mude na tela de
-  //                                             // configuracoes
-  //     } else {
-  //       mensagensGrupoPeer = new MensagensGruposPeer(ipServidor, porta); // Inicializa o cliente UDP
-  //     }
-  //     System.out.println("Cliente UDP criado e conectado ao servidor " + ipServidor + ":" + porta);
-  //     iniciarThreadRecebimentoUDP(); // Inicia a thread para receber mensagens via UDP
-  //   } catch (Exception e) {
-  //     System.err.println("Erro ao criar ClienteUDP: " + e.getMessage());
-  //   }
+  // try {
+  // if (mensagensGrupoPeer != null) {
+  // mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servidor
+  // caso o usuario mude na tela de
+  // // configuracoes
+  // } else {
+  // mensagensGrupoPeer = new MensagensGruposPeer(ipServidor, porta); //
+  // Inicializa o cliente UDP
+  // }
+  // System.out.println("Cliente UDP criado e conectado ao servidor " + ipServidor
+  // + ":" + porta);
+  // iniciarThreadRecebimentoUDP(); // Inicia a thread para receber mensagens via
+  // UDP
+  // } catch (Exception e) {
+  // System.err.println("Erro ao criar ClienteUDP: " + e.getMessage());
+  // }
   // }
 
   /*
@@ -132,19 +135,20 @@ public class Principal extends Application {
    * Retorno: void
    */
   // private void iniciarThreadRecebimentoUDP() {
-  //   new Thread(() -> {
-  //     try {
-  //       while (true) {
-  //         String mensagemRecebida = mensagensGrupoPeer.receberMensagem(); // Aguarda mensagens do servidor
-  //         System.out.println("Mensagem recebida via UDP: " + mensagemRecebida);
+  // new Thread(() -> {
+  // try {
+  // while (true) {
+  // String mensagemRecebida = mensagensGrupoPeer.receberMensagem(); // Aguarda
+  // mensagens do servidor
+  // System.out.println("Mensagem recebida via UDP: " + mensagemRecebida);
 
-  //         // Criar uma thread para processar e renderizar a mensagem recebida
-  //         new Thread(() -> processarMensagemRecebida(mensagemRecebida)).start();
-  //       }
-  //     } catch (Exception e) {
-  //       System.err.println("Erro ao receber mensagem UDP: " + e.getMessage());
-  //     }
-  //   }).start();
+  // // Criar uma thread para processar e renderizar a mensagem recebida
+  // new Thread(() -> processarMensagemRecebida(mensagemRecebida)).start();
+  // }
+  // } catch (Exception e) {
+  // System.err.println("Erro ao receber mensagem UDP: " + e.getMessage());
+  // }
+  // }).start();
   // }
 
   /*
@@ -193,127 +197,156 @@ public class Principal extends Application {
     }
   }
 
-  /* ***************************************************************
-  * Metodo: getClienteTCP
-  * Funcao: Retorna a instância do cliente TCP.
-  * Parametros: sem parâmetros.
-  * Retorno: ClienteTCP
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: getClienteTCP
+   * Funcao: Retorna a instância do cliente TCP.
+   * Parametros: sem parâmetros.
+   * Retorno: ClienteTCP
+   */
   public GruposPeer getGruposPeer() {
     return gruposPeer;
   }
 
-  /* ***************************************************************
-  * Metodo: getClienteUDP
-  * Funcao: Retorna a instância do cliente UDP.
-  * Parametros: sem parâmetros.
-  * Retorno: ClienteUDP
-  *************************************************************** */
-  public EnviarMensagemGrupo getMensagensGruposPeer() {
-    return enviarMensagemGrupo;
-  }
-  /* ***************************************************************
-  * Metodo: setNomeUsuario
-  * Funcao: Define o nome do usuário atual.
-  * Parametros: String nomeUsuario.
-  * Retorno: void
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: getClienteUDP
+   * Funcao: Retorna a instância do cliente UDP.
+   * Parametros: sem parâmetros.
+   * Retorno: ClienteUDP
+   */
+  // public EnviarMensagemGrupo getMensagensGruposPeer() {
+  // return enviarMensagemGrupo;
+  // }
+  /*
+   * ***************************************************************
+   * Metodo: setNomeUsuario
+   * Funcao: Define o nome do usuário atual.
+   * Parametros: String nomeUsuario.
+   * Retorno: void
+   */
   public void setNomeUsuario(String nomeUsuario) {
     this.nomeUsuario = nomeUsuario;
   }
-  /* ***************************************************************
-  * Metodo: getNomeUsuario
-  * Funcao: Retorna o nome do usuário atual.
-  * Parametros: sem parâmetros.
-  * Retorno: String
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getNomeUsuario
+   * Funcao: Retorna o nome do usuário atual.
+   * Parametros: sem parâmetros.
+   * Retorno: String
+   */
   public String getNomeUsuario() {
     return nomeUsuario;
   }
-  /* ***************************************************************
-  * Metodo: setIpServidor
-  * Funcao: Define o IP do servidor e atualiza a conexão UDP.
-  * Parametros: String ip - IP do servidor.
-  * Retorno: void
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: setIpServidor
+   * Funcao: Define o IP do servidor e atualiza a conexão UDP.
+   * Parametros: String ip - IP do servidor.
+   * Retorno: void
+   */
   // public void setIpServidor(String ip) {
-  //   this.ipServidor = ip;
-  //   criarClienteUDP(ip, 6789); // so atualiza o ip do servidor do cliente UDP pois no tcp ja foi atualizado
-  //                              // quando caiu no catch e elegeu um novo servidor
+  // this.ipServidor = ip;
+  // criarClienteUDP(ip, 6789); // so atualiza o ip do servidor do cliente UDP
+  // pois no tcp ja foi atualizado
+  // // quando caiu no catch e elegeu um novo servidor
   // }
-  /* ***************************************************************
-  * Metodo: getIpServidor
-  * Funcao: Retorna o IP atual do servidor.
-  * Parametros: sem parâmetros.
-  * Retorno: String
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: getIpServidor
+   * Funcao: Retorna o IP atual do servidor.
+   * Parametros: sem parâmetros.
+   * Retorno: String
+   */
   public String getIpServidor() {
     return ipServidor;
   }
-  /* ***************************************************************
-  * Metodo: getRoot
-  * Funcao: Retorna o layout principal da aplicação.
-  * Parametros: sem parâmetros.
-  * Retorno: StackPane
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getRoot
+   * Funcao: Retorna o layout principal da aplicação.
+   * Parametros: sem parâmetros.
+   * Retorno: StackPane
+   */
   public StackPane getRoot() {
     return root;
   }
-  /* ***************************************************************
-  * Metodo: getGrupos
-  * Funcao: Retorna a lista de grupos ativos.
-  * Parametros: sem parâmetros.
-  * Retorno: List<String>
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getGrupos
+   * Funcao: Retorna a lista de grupos ativos.
+   * Parametros: sem parâmetros.
+   * Retorno: List<String>
+   */
   public List<String> getGrupos() {
     return grupos;
   }
-  /* ***************************************************************
-  * Metodo: getTelaMeusGrupos
-  * Funcao: Retorna a tela de gerenciamento de grupos.
-  * Parametros: sem parâmetros.
-  * Retorno: TelaMeusGrupos
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getTelaMeusGrupos
+   * Funcao: Retorna a tela de gerenciamento de grupos.
+   * Parametros: sem parâmetros.
+   * Retorno: TelaMeusGrupos
+   */
   public TelaMeusGrupos getTelaMeusGrupos() {
     return telaMeusGrupos;
   }
 
-  /* ***************************************************************
-  * Metodo: getHistoricosMensagens
-  * Funcao: Retorna o mapa com o histórico de mensagens de cada grupo.
-  * Parametros: sem parâmetros.
-  * Retorno: Map<String, HistoricoMensagens>
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: getHistoricosMensagens
+   * Funcao: Retorna o mapa com o histórico de mensagens de cada grupo.
+   * Parametros: sem parâmetros.
+   * Retorno: Map<String, HistoricoMensagens>
+   */
   public Map<String, HistoricoMensagens> getHistoricosMensagens() {
     return historicosMensagens;
   }
-  /* ***************************************************************
-  * Metodo: getServidoresConhecidos
-  * Funcao: Retorna o conjunto de IPs dos servidores conhecidos.
-  * Parametros: sem parâmetros.
-  * Retorno: Set<String>
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getServidoresConhecidos
+   * Funcao: Retorna o conjunto de IPs dos servidores conhecidos.
+   * Parametros: sem parâmetros.
+   * Retorno: Set<String>
+   */
   public Set<String> getPeersConhecidos() {
     return peersConhecidos;
   }
-  /* ***************************************************************
-  * Metodo: setServidoresConhecidos
-  * Funcao: Adiciona um novo IP ao conjunto de servidores conhecidos e inicializa conexões se necessário.
-  * Parametros: String novoServidor - IP do servidor a ser adicionado.
-  * Retorno: void
-  *************************************************************** */
-  public void setPeersConhecidos(String novoServidor) {
-    peersConhecidos.add(novoServidor);
-    // System.out.println("Servidor adicionado: " + novoServidor);
-    // if (ipServidor == null) {
-    //   ipServidor = novoServidor;
-    //   if (gruposPeer == null) {
-    //     gruposPeer = new GruposPeer(ipServidor, 6789, this);
-    //   }
-    //   if (mensagensGrupoPeer == null) {
-    //     criarClienteUDP(ipServidor, 6789);
-    //   }
+
+  /*
+   * ***************************************************************
+   * Metodo: setServidoresConhecidos
+   * Funcao: Adiciona um novo IP ao conjunto de servidores conhecidos e inicializa
+   * conexões se necessário.
+   * Parametros: String novoServidor - IP do servidor a ser adicionado.
+   * Retorno: void
+   */
+  public void setPeersConhecidos(String novoPeer) {
+    peersConhecidos.add(novoPeer);
+    // if (!peersConhecidos.contains(novoPeer)) {
+    //   // AtualizarPeers atualizarPeers = new AtualizarPeers(novoPeer, 6789, peer);
+    //   // peerTCP.add(atualizarPeers);
+    //   peersConhecidos.add(novoPeer);
+
+    //   // app.setPeersConhecidos(novoPeer);
+
+    //   System.out.println("Peer adicionado: " + novoPeer);
+
     // }
+    System.out.println("Meus grupos: " + grupos);
+    for (String nomeGrupo : grupos) { // envia join de todos os grupos que esta para todos os peers (rewolve o
+                                      // problema de atualizar um peer caso ele caia, mas aumenta significativamente o
+                                      // numero de mensagens trocadas), tentar melhor depois
+      System.out.println("Enviando JOIN para grupo: " + nomeGrupo + " no peer: " + novoPeer + " usuario: " + nomeUsuario);
+      GruposPeer gruposPeer = new GruposPeer(novoPeer, 6789, app);
+      gruposPeer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
+    }
   }
 
   public Peer getPeer() {

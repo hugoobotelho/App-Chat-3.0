@@ -23,7 +23,7 @@ public class PeerUDP {
    */
   public void iniciar() {
     try {
-      DatagramSocket servidorSocket = new DatagramSocket(6789); // Porta do servidor
+      DatagramSocket servidorSocket = new DatagramSocket(1234); // Porta do servidor
       System.out.println("Servidor UDP iniciado na porta 6789...");
 
       while (true) {
