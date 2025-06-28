@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.net.*;
 import java.util.Map;
 
@@ -6,11 +7,14 @@ public class PeerUDP {
   private final GrupoManager grupoManager;
   private final Map<String, Usuario> usuarios;
   Principal app;
+  private final DatagramSocket clienteSocket1; // escuta
 
-  public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Principal app) {
+  public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Principal app) throws SocketException {
     this.grupoManager = grupoManager;
     this.usuarios = usuarios;
     this.app = app;
+    this.clienteSocket1 = new DatagramSocket(2345); // Para receber "RECEBIDO"
+
   }
 
   /*
@@ -25,20 +29,64 @@ public class PeerUDP {
     try {
       DatagramSocket servidorSocket = new DatagramSocket(1234); // Porta do servidor
       System.out.println("Servidor UDP iniciado na porta 6789...");
+      new Thread(() -> {
+        while (true) {
+          // Buffer para receber dados
+          byte[] dadosRecebidos = new byte[1024];
+          DatagramPacket pacoteRecebido = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
 
-      while (true) {
-        // Buffer para receber dados
-        byte[] dadosRecebidos = new byte[1024];
-        DatagramPacket pacoteRecebido = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
+          // Aguarda uma mensagem de um cliente
+          try {
+            servidorSocket.receive(pacoteRecebido);
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
 
-        // Aguarda uma mensagem de um cliente
-        servidorSocket.receive(pacoteRecebido);
+          // Inicia uma nova thread para processar a mensagem recebida
+          new Thread(new ProcessaMensagem(pacoteRecebido, servidorSocket)).start();
+        }
+      }).start();
+      new Thread(() -> {
+        while (true) {
+          // Espera confirmação
+          String resposta = receberConfirmacao();
+          if (resposta.startsWith("RECEBIDO|")) {
+            String[] partes = resposta.split("\\|");
+            String remetente = partes[1];
+            String grupo = partes[2];
+            String timestamp = partes[3];
 
-        // Inicia uma nova thread para processar a mensagem recebida
-        new Thread(new ProcessaMensagem(pacoteRecebido, servidorSocket)).start();
-      }
+            // app.getPeer().getGrupoManager().historicoMensagens.atualizarStatusMensagem(timestamp,
+            // grupo);
+            if (app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo) != null) {
+              for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
+                if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
+                  m.incrementaRecebimento(remetente, grupo);
+                }
+              }
+            }
+
+          } else {
+            System.out.println("Falha no envio: " + resposta);
+          }
+        }
+      }).start();
+
     } catch (Exception e) {
       System.err.println("Erro no servidor UDP: " + e.getMessage());
+    }
+  }
+
+  public String receberConfirmacao() {
+    try {
+      byte[] dadosRecebidos = new byte[1024];
+      DatagramPacket pacoteRecebido = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
+      clienteSocket1.receive(pacoteRecebido); // Bloqueia até receber um pacote
+      return new String(pacoteRecebido.getData(), 0, pacoteRecebido.getLength());
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "Erro";
     }
   }
 
@@ -112,7 +160,8 @@ public class PeerUDP {
           // }
 
           // Envia confirmação de recebimento ao remetente
-          String resposta = "RECEBIDO|" +  nomeGrupo + "|" + app.getNomeUsuario() + "|" + conteudoMensagem + "|" + timeStamp ;
+          String resposta = "RECEBIDO|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + conteudoMensagem + "|"
+              + timeStamp;
           byte[] dadosResposta = resposta.getBytes();
           DatagramPacket pacoteResposta = new DatagramPacket(
               dadosResposta,

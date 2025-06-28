@@ -7,6 +7,7 @@
 * Funcao...........: Aplicativo de chat para troca de mensagens com o modelo n clientes e n servidores
 *************************************************************** */
 
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +31,6 @@ public class Peer {
 
     this.app = app;
 
-
     System.out.println(app.getPeersConhecidos());
 
     peersConhecidos = app.getPeersConhecidos();
@@ -46,8 +46,14 @@ public class Peer {
 
     // Inicia o peer UDP em uma thread separada
     Thread peerUDPThread = new Thread(() -> {
-      PeerUDP peerUDP = new PeerUDP(grupoManager, usuarios, app);
-      peerUDP.iniciar();
+      PeerUDP peerUDP;
+      try {
+        peerUDP = new PeerUDP(grupoManager, usuarios, app);
+        peerUDP.iniciar();
+      } catch (SocketException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     });
 
     // Inicia o servidor TCP em uma thread separada
@@ -118,7 +124,10 @@ public class Peer {
 
     }
 
-    for (String nomeGrupo : app.getGrupos()) { // envia join de todos os grupos que esta para todos os peers (rewolve o problema de atualizar um peer caso ele caia, mas aumenta significativamente o numero de mensagens trocadas), tentar melhor depois
+    for (String nomeGrupo : app.getGrupos()) { // envia join de todos os grupos que esta para todos os peers (rewolve o
+                                               // problema de atualizar um peer caso ele caia, mas aumenta
+                                               // significativamente o numero de mensagens trocadas), tentar melhor
+                                               // depois
       GruposPeer gruposPeer = new GruposPeer(novoPeer, 6789, app);
       gruposPeer.enviarAPDUJoin(app.getNomeUsuario(), nomeGrupo);
     }
@@ -126,13 +135,13 @@ public class Peer {
   }
 
   // public void setMessageLog(String message) {
-  //   if (!menssagensLog.contains(message)) {
-  //     menssagensLog.add(message);
-  //   }
+  // if (!menssagensLog.contains(message)) {
+  // menssagensLog.add(message);
+  // }
   // }
 
   // public List<String> getMessageLog() {
-  //   return menssagensLog;
+  // return menssagensLog;
   // }
 
   /*
