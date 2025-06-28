@@ -100,7 +100,8 @@ public class TelaChat {
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
 
             // Adiciona mensagem ao histórico
-            Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp, nomeGrupo);
+            Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
+                nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
 
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
@@ -194,6 +195,15 @@ public class TelaChat {
       conteudoMensagem.setStyle(
           "-fx-max-width: 240px;" +
               "-fx-wrap-text: true;");
+
+      Region region = new Region();
+      HBox.setHgrow(region, Priority.ALWAYS);
+
+      conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, checkImageView);
+
+      conteudoCheckHBox.setAlignment(Pos.CENTER);
+
+      componenteMensagem.getChildren().addAll(remetenteLabel, conteudoCheckHBox, horarioLabel);
     } else {
       conteudoMensagem.setStyle(
           "-fx-background-color: #333333; " +
@@ -204,16 +214,9 @@ public class TelaChat {
               "-fx-max-width: 250px; " +
               "-fx-wrap-text: true;");
       componenteMensagem.setStyle("-fx-alignment: top-left;");
+      componenteMensagem.getChildren().addAll(remetenteLabel, conteudoMensagem, horarioLabel);
     }
 
-    Region region = new Region();
-    HBox.setHgrow(region, Priority.ALWAYS);
-
-    conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, checkImageView);
-
-    conteudoCheckHBox.setAlignment(Pos.CENTER);
-
-    componenteMensagem.getChildren().addAll(remetenteLabel, conteudoCheckHBox, horarioLabel);
     return componenteMensagem;
   }
 
