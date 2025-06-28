@@ -44,7 +44,7 @@ public class Mensagem {
   }
 
   public void incrementaRecebimento(String remetente, String nomeGrupo) {
-    System.out.println("Vai incrementar recebimento");
+    System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
     // if (app.getGrupos().contains(nomeGrupo) && remetente.equals(app.getNomeUsuario())) {
     //   qtdVistos++;
     // }
@@ -52,8 +52,9 @@ public class Mensagem {
       System.out.println("MENSAGEM RECEBIDA POR " + remetente);
       qtdVistos++;
     }
-    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() - 1)) {
+    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
       setStatus("checkDuplo");
+      app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
   }
 
