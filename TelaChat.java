@@ -100,7 +100,7 @@ public class TelaChat {
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
 
             // Adiciona mensagem ao histórico
-            Mensagem novaMensagem = new Mensagem(app, "Voce", mensagem, horaAtual, "check", timeStamp, nomeGrupo);
+            Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp, nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
 
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
@@ -108,7 +108,7 @@ public class TelaChat {
             // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
             for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
                                                                                              // grupo, a mensagem.
-              if (!membro.getNome().equals("Voce")) {
+              if (!membro.getNome().equals(app.getNomeUsuario())) {
                 EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app,
                     membro.getEndereco().getHostAddress(),
                     1234);
@@ -181,7 +181,7 @@ public class TelaChat {
     Label horarioLabel = new Label(mensagem.getHora());
     horarioLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
 
-    if (mensagem.getRemetente().equals("Voce")) {
+    if (mensagem.getRemetente().equals(app.getNomeUsuario())) {
       componenteMensagem.setStyle("-fx-alignment: top-right;");
       conteudoCheckHBox.setStyle(
           "-fx-background-color: #E5AF18; " +
