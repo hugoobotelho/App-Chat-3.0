@@ -96,22 +96,25 @@ public class TelaChat {
         if (!mensagem.isEmpty()) {
           try {
             String timeStamp = Long.toString(System.currentTimeMillis());
-            String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|" + timeStamp ;
-            // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
-            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
-                                                                                             // grupo, a mensagem.
-              if (!membro.getNome().equals("Voce")) {
-                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, membro.getEndereco().getHostAddress(),
-                    1234);
-                enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
-              }
-            }
 
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
 
             // Adiciona mensagem ao histórico
             Mensagem novaMensagem = new Mensagem(app, "Voce", mensagem, horaAtual, "check", timeStamp, nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
+
+            String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
+                + timeStamp;
+            // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
+            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
+                                                                                             // grupo, a mensagem.
+              if (!membro.getNome().equals("Voce")) {
+                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app,
+                    membro.getEndereco().getHostAddress(),
+                    1234);
+                enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
+              }
+            }
 
             // Atualiza as mensagens exibidas
             renderizarMensagens();
@@ -142,7 +145,7 @@ public class TelaChat {
     Platform.runLater(() -> {
       listaMensagens.getChildren().clear();
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-        //criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
+        // criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
     });

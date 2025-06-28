@@ -45,13 +45,16 @@ public class EnviarMensagemGrupo {
         String grupo = partes[2];
         String timestamp = partes[3];
 
-        // app.getPeer().getGrupoManager().historicoMensagens.atualizarStatusMensagem(timestamp, grupo);
-        for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
-          if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)){
-            m.incrementaRecebimento(remetente, grupo);
+        // app.getPeer().getGrupoManager().historicoMensagens.atualizarStatusMensagem(timestamp,
+        // grupo);
+        if (app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens() != null) {
+          for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
+            if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
+              m.incrementaRecebimento(remetente, grupo);
+            }
           }
         }
-        
+
       } else {
         System.out.println("Falha no envio: " + resposta);
       }
