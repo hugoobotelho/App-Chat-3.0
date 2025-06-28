@@ -52,7 +52,7 @@ public class Mensagem {
       System.out.println("MENSAGEM RECEBIDA POR " + remetente);
       qtdVistos++;
     }
-    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
+    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() - 1)) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
