@@ -1,4 +1,6 @@
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +19,8 @@ public class Mensagem {
   private int qtdRecebimentos = 0;
   private int qtdVistos = 0;
   Principal app;
+  private Set<String> membrosVistos = new HashSet<>();
+
 
   public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp,
       String nomeGrupo) {
@@ -84,13 +88,14 @@ public class Mensagem {
           // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
           if (usuario.getNome().equals(remetente)) {
             System.out.println("MENSAGEM RECEBIDA POR " + remetente);
-            qtdVistos++;
+            // qtdVistos++;
+            membrosVistos.add(remetente);
           }
         }
       }
     }
 
-    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() )) {
+    if (membrosVistos.size() == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
       setStatus("checkVisto");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
