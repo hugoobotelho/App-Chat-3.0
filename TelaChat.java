@@ -36,6 +36,20 @@ public class TelaChat {
     HBox header = new HBox();
     header.setStyle("-fx-background-color: #333333; -fx-padding: 24px; -fx-alignment: center;");
 
+    // Crie o ImageView como antes
+    ImageView iconeVisualizacaoUnica = new ImageView(new Image("/img/visualizacaoUnicaCinza.png"));
+    iconeVisualizacaoUnica.setFitHeight(24);
+    iconeVisualizacaoUnica.setFitWidth(24);
+
+    // Coloque dentro de um Button
+    Button botaoVisualizacaoUnica = new Button();
+    botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
+    botaoVisualizacaoUnica.setStyle(
+        "-fx-background-color: transparent; " +
+            "-fx-cursor: hand; " +
+            "-fx-padding: 10px;" // Aumenta a área clicável sem fundo visível
+    );
+
     // icone de Voltar
     ImageView voltarIcon = new ImageView(new Image("/img/voltarIcon.png"));
     voltarIcon.setFitHeight(40);
@@ -46,7 +60,7 @@ public class TelaChat {
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
       iconeFlag = true;
-
+      botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
       historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); // remove as mensagens de
                                                                                        // visualizacao unica
       renderizarMensagens();
@@ -96,19 +110,6 @@ public class TelaChat {
     VBox.setMargin(enviarMensagemLayout, new Insets(10, 10, 10, 10));
     enviarMensagemLayout.setAlignment(Pos.CENTER_LEFT);
 
-    // Crie o ImageView como antes
-    ImageView iconeVisualizacaoUnica = new ImageView(new Image("/img/visualizacaoUnicaCinza.png"));
-    iconeVisualizacaoUnica.setFitHeight(24);
-    iconeVisualizacaoUnica.setFitWidth(24);
-
-    // Coloque dentro de um Button
-    Button botaoVisualizacaoUnica = new Button();
-    botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
-    botaoVisualizacaoUnica.setStyle(
-        "-fx-background-color: transparent; " +
-            "-fx-cursor: hand; " +
-            "-fx-padding: 10px;" // Aumenta a área clicável sem fundo visível
-    );
     // botaoVisualizacaoUnica.setMinSize(24, 24); // area de clique maior
 
     // Alternância de imagem ao clicar
