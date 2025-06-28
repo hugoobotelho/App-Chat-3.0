@@ -10,6 +10,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+
+import java.util.Map;
+import java.util.Set;
+
 import javafx.application.Platform;
 
 public class TelaChat {
@@ -110,10 +114,10 @@ public class TelaChat {
             for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
                                                                                              // grupo, a mensagem.
               // if (!membro.getNome().equals(app.getNomeUsuario())) {
-                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app,
-                    membro.getEndereco().getHostAddress(),
-                    1234);
-                enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
+              EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app,
+                  membro.getEndereco().getHostAddress(),
+                  1234);
+              enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
               // }
             }
 
@@ -143,10 +147,33 @@ public class TelaChat {
    * Retorno: void
    */
   public void renderizarMensagens() {
+    for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+      // criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
+      for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+        if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
+          for (Usuario usuario : entry.getValue()) {
+            if (usuario.getNome().equals(mensagem.getRemetente())) {
+              String ipRemetente = usuario.getEndereco().getHostAddress();
+              EnviarMensagemGrupo enviarMensagemGrupo;
+              try {
+                enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
+                String respostaVisto = "RECEBIDO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
+                    + mensagem.getConteudo() + "|"
+                    + mensagem.getTimeStampMensagem();
+                enviarMensagemGrupo.enviarMensagem(respostaVisto);
+              } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+            }
+          }
+        }
+      }
+    }
+
     Platform.runLater(() -> {
       listaMensagens.getChildren().clear();
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-        // criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
     });

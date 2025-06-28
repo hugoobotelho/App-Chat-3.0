@@ -52,9 +52,10 @@ public class PeerUDP {
           // Espera confirmação
           String resposta = receberConfirmacao();
           System.out.println("Recebi a resposta da minha mensagem: " + resposta);
-          if (resposta.startsWith("RECEBIDO|")) {
+          if (resposta.startsWith("RECEBIDO|") || resposta.startsWith("VISTO|")) {
             String[] partes = resposta.split("\\|");
-            
+
+            String apdu = partes[0];
             String grupo = partes[1];
             String remetente = partes[2];
             String timestamp = partes[4];
@@ -66,11 +67,15 @@ public class PeerUDP {
               System.out.println("Existe!!!");
               for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
                 if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
-                  m.incrementaRecebimento(remetente, grupo);
+                  if (apdu.equals("RECEBIDO")) {
+                    m.incrementaRecebimento(remetente, grupo);
+                  }
+                  else if (apdu.equals("VISTO")){
+                    m.incrementaVistos(remetente, grupo);
+                  }
                 }
               }
-            }
-            else {
+            } else {
               System.out.println("NAO Existe!!!");
             }
 

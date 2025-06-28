@@ -14,6 +14,7 @@ public class Mensagem {
   Image check = new Image("/img/check.png");
   Image checkDuplo = new Image("/img/checkDuplo.png");
   Image checkVisto = new Image("/img/checkVisto.png");
+  private int qtdRecebimentos = 0;
   private int qtdVistos = 0;
   Principal app;
 
@@ -58,6 +59,31 @@ public class Mensagem {
           // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
           if (usuario.getNome().equals(remetente)) {
             System.out.println("MENSAGEM RECEBIDA POR " + remetente);
+            qtdRecebimentos++;
+          }
+        }
+      }
+    }
+
+    if (qtdRecebimentos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() ) && !status.equals("checkVisto")) {
+      setStatus("checkDuplo");
+      app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
+    }
+  }
+
+    public void incrementaVistos(String remetente, String nomeGrupo) {
+    System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
+    // if (app.getGrupos().contains(nomeGrupo) &&
+    // remetente.equals(app.getNomeUsuario())) {
+    // qtdVistos++;
+    // }
+    for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+      // System.out.println("Grupo: " + entry.getKey());
+      if (entry.getKey().equals(nomeGrupo)) {
+        for (Usuario usuario : entry.getValue()) {
+          // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
+          if (usuario.getNome().equals(remetente)) {
+            System.out.println("MENSAGEM RECEBIDA POR " + remetente);
             qtdVistos++;
           }
         }
@@ -65,7 +91,7 @@ public class Mensagem {
     }
 
     if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() )) {
-      setStatus("checkDuplo");
+      setStatus("checkVisto");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
   }
