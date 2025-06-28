@@ -46,7 +46,8 @@ public class TelaChat {
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
 
-      historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); //remove as mensagens de visualizacao unica
+      historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); // remove as mensagens de
+                                                                                       // visualizacao unica
       renderizarMensagens();
 
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
@@ -219,19 +220,21 @@ public class TelaChat {
 
   public void notificarVistoDasMensagens() {
     for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-      for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
-        if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
-          for (Usuario usuario : entry.getValue()) {
-            if (usuario.getNome().equals(mensagem.getRemetente())) {
-              String ipRemetente = usuario.getEndereco().getHostAddress();
-              try {
-                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
-                String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
-                    + mensagem.getConteudo() + "|"
-                    + mensagem.getTimeStampMensagem();
-                enviarMensagemGrupo.enviarMensagem(respostaVisto);
-              } catch (Exception e) {
-                e.printStackTrace();
+      if (!mensagem.getStatus().equals("unique")) {
+        for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+          if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
+            for (Usuario usuario : entry.getValue()) {
+              if (usuario.getNome().equals(mensagem.getRemetente())) {
+                String ipRemetente = usuario.getEndereco().getHostAddress();
+                try {
+                  EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
+                  String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
+                      + mensagem.getConteudo() + "|"
+                      + mensagem.getTimeStampMensagem();
+                  enviarMensagemGrupo.enviarMensagem(respostaVisto);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
               }
             }
           }
