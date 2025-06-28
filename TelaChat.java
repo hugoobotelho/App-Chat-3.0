@@ -184,19 +184,22 @@ public class TelaChat {
     new Thread(() -> {
       while (threadRodando) {
         if (isOpen) {
-          int totalMensagens = historicoMensagens.getMensagens().size();
-          if (totalMensagens > mensagensJaVistas) {
-            mensagensJaVistas = totalMensagens;
+          long totalNaoUnicas = historicoMensagens.getMensagens().stream()
+              .filter(m -> !m.getStatus().equals("unique"))
+              .count();
+
+          if (totalNaoUnicas > mensagensJaVistas) {
+            mensagensJaVistas = (int) totalNaoUnicas;
             notificarVistoDasMensagens();
           }
         }
+
         try {
-          Thread.sleep(1000); // verifica a cada segundo
+          Thread.sleep(1000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
-
     }).start();
   }
 
