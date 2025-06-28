@@ -1,12 +1,62 @@
+import java.time.LocalTime;
+
+import javafx.scene.image.Image;
+
 public class Mensagem {
   private String remetente;
   private String conteudo;
   private String hora;
+  private String status;
+  private String timeStamp;
+  private String nomeGrupo;
+  Image check = new Image("/img/check.png");
+  Image checkDuplo = new Image("/img/checkDuplo.png");
+  Image checkVisto = new Image("/img/checkVisto.png");
+  private int qtdVistos = 0;
+  Principal app;
 
-  public Mensagem(String remetente, String conteudo, String hora) {
+  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp, String nomeGrupo) {
+    this.app = app;
     this.remetente = remetente;
     this.conteudo = conteudo;
     this.hora = hora;
+    this.status = status;
+    this.timeStamp = timeStamp;
+    this.nomeGrupo = nomeGrupo;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public Image getStatus() {
+    // if (status.equals("check")) {
+    //   return check;
+    // }
+    if (status.equals("checkDuplo")){
+      return checkDuplo;
+    }
+    if (status.equals("checkVisto")){
+      return checkVisto;
+    }
+    return check;
+  }
+
+  public void incrementaRecebimento(String remetente, String nomeGrupo) {
+    if (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).contains(remetente)){
+      qtdVistos++;
+      if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() -1 )){
+        setStatus("checkDuplo");
+      }
+    }
+  }
+
+  public String getNomeGrupoMensagem() {
+    return nomeGrupo;
+  }
+
+  public String getTimeStampMensagem() {
+    return timeStamp;
   }
 
   /*

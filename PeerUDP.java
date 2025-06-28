@@ -5,7 +5,7 @@ import java.util.Map;
 public class PeerUDP {
   private final GrupoManager grupoManager;
   private final Map<String, Usuario> usuarios;
-  Principal app; 
+  Principal app;
 
   public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Principal app) {
     this.grupoManager = grupoManager;
@@ -71,8 +71,8 @@ public class PeerUDP {
 
         // Divide a mensagem pela estrutura definida:
         // "SEND|NomeGrupo|NomeUsuario|Mensagem"
-        String[] partes = mensagemRecebida.split("\\|", 4);
-        if (partes.length != 4) {
+        String[] partes = mensagemRecebida.split("\\|", 5);
+        if (partes.length != 5) {
           System.err.println("Formato inválido ou tipo de mensagem desconhecido.");
           return;
         }
@@ -82,6 +82,7 @@ public class PeerUDP {
         String nomeGrupo = partes[1];
         String nomeUsuario = partes[2];
         String conteudoMensagem = partes[3];
+        String timeStamp = partes[4];
 
         // Verifica se a mensagem é do tipo SEND
         if (tipoMensagem.equals("SEND")) {
@@ -99,14 +100,26 @@ public class PeerUDP {
 
           // Reencaminha a mensagem para todos os membros do grupo, exceto o remetente
           // for (Usuario usuario : grupoManager.obterMembros(nomeGrupo)) {
-          //   if (!usuario.equals(remetente)) {
-          //     InetAddress enderecoCliente = usuario.getEndereco();
-          //     int portaCliente = usuario.getPorta();
-          //     byte[] dadosSaida = String.format("SEND|%s|%s|%s", nomeGrupo, nomeUsuario, conteudoMensagem).getBytes();
-          //     DatagramPacket pacoteResposta = new DatagramPacket(dadosSaida, dadosSaida.length, enderecoCliente, 9876);
-          //     servidorSocket.send(pacoteResposta);
-          //   }
+          // if (!usuario.equals(remetente)) {
+          // InetAddress enderecoCliente = usuario.getEndereco();
+          // int portaCliente = usuario.getPorta();
+          // byte[] dadosSaida = String.format("SEND|%s|%s|%s", nomeGrupo, nomeUsuario,
+          // conteudoMensagem).getBytes();
+          // DatagramPacket pacoteResposta = new DatagramPacket(dadosSaida,
+          // dadosSaida.length, enderecoCliente, 9876);
+          // servidorSocket.send(pacoteResposta);
           // }
+          // }
+
+          // Envia confirmação de recebimento ao remetente
+          String resposta = "RECEBIDO|" +  nomeGrupo + "|" + app.getNomeUsuario() + "|" + conteudoMensagem + "|" + timeStamp ;
+          byte[] dadosResposta = resposta.getBytes();
+          DatagramPacket pacoteResposta = new DatagramPacket(
+              dadosResposta,
+              dadosResposta.length,
+              pacoteRecebido.getAddress(),
+              pacoteRecebido.getPort());
+          servidorSocket.send(pacoteResposta);
 
           app.processarMensagemRecebida(mensagemRecebida);
         } else {

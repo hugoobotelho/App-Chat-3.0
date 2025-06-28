@@ -171,27 +171,31 @@ public class Principal extends Application {
       String grupo = partes[1];
       String usuario = partes[2];
       String mensagem = partes[3];
+      String timeStamp = partes[4];
 
-      // Adicionar a mensagem ao histórico
-      HistoricoMensagens historico = historicosMensagens.get(grupo);
-      if (historico == null) {
-        System.err.println("Grupo não encontrado: " + grupo);
-        return;
-      }
-      String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
-      Mensagem novaMensagem = new Mensagem(usuario, mensagem, horaAtual);
-      historico.adicionarMensagem(novaMensagem);
-
-      // Atualizar a interface gráfica na thread da aplicação
-      Platform.runLater(() -> {
-        TelaMeusGrupos telaGrupos = getTelaMeusGrupos();
-        Map<String, TelaChat> telasChat = telaGrupos.getTelasChat(); // Supondo que este método foi adicionado
-
-        TelaChat telaChat = telasChat.get(grupo);
-        if (telaChat != null) {
-          telaChat.renderizarMensagens(); // Re-renderiza as mensagens
+      if (!usuario.equals(nomeUsuario)) {
+        // Adicionar a mensagem ao histórico
+        HistoricoMensagens historico = historicosMensagens.get(grupo);
+        if (historico == null) {
+          System.err.println("Grupo não encontrado: " + grupo);
+          return;
         }
-      });
+        String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+        Mensagem novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp, grupo);
+        historico.adicionarMensagem(novaMensagem);
+
+        // Atualizar a interface gráfica na thread da aplicação
+        Platform.runLater(() -> {
+          TelaMeusGrupos telaGrupos = getTelaMeusGrupos();
+          Map<String, TelaChat> telasChat = telaGrupos.getTelasChat(); // Supondo que este método foi adicionado
+
+          TelaChat telaChat = telasChat.get(grupo);
+          if (telaChat != null) {
+            telaChat.renderizarMensagens(); // Re-renderiza as mensagens
+          }
+        });
+      }
+
     } catch (Exception e) {
       System.err.println("Erro ao processar mensagem recebida: " + e.getMessage());
     }
@@ -330,20 +334,21 @@ public class Principal extends Application {
   public void setPeersConhecidos(String novoPeer) {
     peersConhecidos.add(novoPeer);
     // if (!peersConhecidos.contains(novoPeer)) {
-    //   // AtualizarPeers atualizarPeers = new AtualizarPeers(novoPeer, 6789, peer);
-    //   // peerTCP.add(atualizarPeers);
-    //   peersConhecidos.add(novoPeer);
+    // // AtualizarPeers atualizarPeers = new AtualizarPeers(novoPeer, 6789, peer);
+    // // peerTCP.add(atualizarPeers);
+    // peersConhecidos.add(novoPeer);
 
-    //   // app.setPeersConhecidos(novoPeer);
+    // // app.setPeersConhecidos(novoPeer);
 
-    //   System.out.println("Peer adicionado: " + novoPeer);
+    // System.out.println("Peer adicionado: " + novoPeer);
 
     // }
     System.out.println("Meus grupos: " + grupos);
     for (String nomeGrupo : grupos) { // envia join de todos os grupos que esta para todos os peers (rewolve o
                                       // problema de atualizar um peer caso ele caia, mas aumenta significativamente o
                                       // numero de mensagens trocadas), tentar melhor depois
-      System.out.println("Enviando JOIN para grupo: " + nomeGrupo + " no peer: " + novoPeer + " usuario: " + nomeUsuario);
+      System.out
+          .println("Enviando JOIN para grupo: " + nomeGrupo + " no peer: " + novoPeer + " usuario: " + nomeUsuario);
       GruposPeer gruposPeer = new GruposPeer(novoPeer, 6789, app);
       gruposPeer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
     }

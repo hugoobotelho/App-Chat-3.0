@@ -209,6 +209,10 @@ public class TelaMeusGrupos {
     telasChat.remove(grupo); // Remove a instância de TelaChat associada
   }
 
+  public HistoricoMensagens getHistoricoMensagensGrupo(String grupo) {
+    return historicosMensagens.get(grupo);
+  }
+
   /* ***************************************************************
   * Metodo: criarCampoComPlaceholder
   * Funcao: Cria um campo de texto (TextField) com placeholder persistente, que não desaparece ao focar.

@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.application.Platform;
 
 public class TelaChat {
@@ -94,17 +95,22 @@ public class TelaChat {
         String mensagem = campoMensagem.getText();
         if (!mensagem.isEmpty()) {
           try {
-            String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem;
+            String timeStamp = Long.toString(System.currentTimeMillis());
+            String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|" + timeStamp ;
             // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
-            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { //enviar para cada peer do grupo, a mensagem.
-              EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(membro.getEndereco().getHostAddress(), 1234);
-              enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
+            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
+                                                                                             // grupo, a mensagem.
+              if (!membro.getNome().equals("Voce")) {
+                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, membro.getEndereco().getHostAddress(),
+                    1234);
+                enviarMensagemGrupo.enviarMensagem(mensagemFormatada);
+              }
             }
 
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
 
             // Adiciona mensagem ao histórico
-            Mensagem novaMensagem = new Mensagem("Voce", mensagem, horaAtual);
+            Mensagem novaMensagem = new Mensagem(app, "Voce", mensagem, horaAtual, "check", timeStamp, nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
 
             // Atualiza as mensagens exibidas
@@ -136,6 +142,7 @@ public class TelaChat {
     Platform.runLater(() -> {
       listaMensagens.getChildren().clear();
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+        //criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
     });
@@ -156,21 +163,24 @@ public class TelaChat {
     remetenteLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
 
     Label conteudoMensagem = new Label(mensagem.getConteudo());
-    conteudoMensagem.setStyle(
-        "-fx-background-color: #333333; " +
-            "-fx-text-fill: #E5AF18; " +
-            "-fx-font-size: 16px; " +
-            "-fx-padding: 10px; " +
-            "-fx-background-radius: 10px; " +
-            "-fx-max-width: 250px; " +
-            "-fx-wrap-text: true;");
+    // conteudoMensagem.setStyle(
+    // "-fx-background-color: #333333; " +
+    // "-fx-text-fill: #E5AF18; " +
+    // "-fx-font-size: 16px; " +
+    // "-fx-padding: 10px; " +
+    // "-fx-background-radius: 10px; " +
+    // "-fx-max-width: 250px; " +
+    // "-fx-wrap-text: true;");
+
+    ImageView checkImageView = new ImageView(mensagem.getStatus());
+    HBox conteudoCheckHBox = new HBox(5);
 
     Label horarioLabel = new Label(mensagem.getHora());
     horarioLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
 
     if (mensagem.getRemetente().equals("Voce")) {
       componenteMensagem.setStyle("-fx-alignment: top-right;");
-      conteudoMensagem.setStyle(
+      conteudoCheckHBox.setStyle(
           "-fx-background-color: #E5AF18; " +
               "-fx-text-fill: #333333; " +
               "-fx-font-size: 16px; " +
@@ -178,11 +188,29 @@ public class TelaChat {
               "-fx-background-radius: 10px; " +
               "-fx-max-width: 250px; " +
               "-fx-wrap-text: true;");
+      conteudoMensagem.setStyle(
+          "-fx-max-width: 240px;" +
+              "-fx-wrap-text: true;");
     } else {
+      conteudoMensagem.setStyle(
+          "-fx-background-color: #333333; " +
+              "-fx-text-fill: #E5AF18; " +
+              "-fx-font-size: 16px; " +
+              "-fx-padding: 10px; " +
+              "-fx-background-radius: 10px; " +
+              "-fx-max-width: 250px; " +
+              "-fx-wrap-text: true;");
       componenteMensagem.setStyle("-fx-alignment: top-left;");
     }
 
-    componenteMensagem.getChildren().addAll(remetenteLabel, conteudoMensagem, horarioLabel);
+    Region region = new Region();
+    HBox.setHgrow(region, Priority.ALWAYS);
+
+    conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, checkImageView);
+
+    conteudoCheckHBox.setAlignment(Pos.CENTER);
+
+    componenteMensagem.getChildren().addAll(remetenteLabel, conteudoCheckHBox, horarioLabel);
     return componenteMensagem;
   }
 
