@@ -43,7 +43,9 @@ public class Mensagem {
   }
 
   public void incrementaRecebimento(String remetente, String nomeGrupo) {
+    System.out.println("Vai incrementar recebimento");
     if (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).contains(remetente)){
+      System.out.println("MENSAGEM RECEBIDA POR " + remetente);
       qtdVistos++;
       if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() -1 )){
         setStatus("checkDuplo");
