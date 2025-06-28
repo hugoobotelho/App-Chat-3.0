@@ -173,13 +173,15 @@ public class TelaMeusGrupos {
         // Verifica se já existe uma instância de TelaChat para o grupo
         if (telasChat.containsKey(grupo)) {
           telaChat = telasChat.get(grupo);
+          telaChat.isOpen = true;
         } else {
           // Cria uma nova instância de TelaChat e armazena no mapa
           telaChat = new TelaChat(app, grupo, historicosMensagens.get(grupo));
           telasChat.put(grupo, telaChat);
-        }
+          telaChat.isOpen = true;
+          telaChat.iniciarThreadVisualizacoes();
 
-        telaChat.iniciarThreadVisualizacoes();
+        }
 
         // Exibe a tela do chat
         app.getRoot().getChildren().setAll(telaChat.getLayout());
@@ -188,23 +190,28 @@ public class TelaMeusGrupos {
       grupoContainer.getChildren().add(grupoBotao);
     }
   }
-  /* ***************************************************************
-  * Metodo: getTelasChat
-  * Funcao: Retorna o mapa que contém as instâncias de telas de chat para os grupos.
-  * Parametros: nenhum
-  * Retorno: Map<String, TelaChat> - mapa com as instâncias das telas de chat
-  *************************************************************** */
+
+  /*
+   * ***************************************************************
+   * Metodo: getTelasChat
+   * Funcao: Retorna o mapa que contém as instâncias de telas de chat para os
+   * grupos.
+   * Parametros: nenhum
+   * Retorno: Map<String, TelaChat> - mapa com as instâncias das telas de chat
+   */
   public Map<String, TelaChat> getTelasChat() {
     return telasChat;
   }
 
-  /* ***************************************************************
-  * Metodo: removerGrupo
-  * Funcao: Remove um grupo da lista de grupos e de seu histórico de mensagens, além de remover a instância
-  *         de TelaChat associada.
-  * Parametros: String grupo - o nome do grupo a ser removido
-  * Retorno: void
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: removerGrupo
+   * Funcao: Remove um grupo da lista de grupos e de seu histórico de mensagens,
+   * além de remover a instância
+   * de TelaChat associada.
+   * Parametros: String grupo - o nome do grupo a ser removido
+   * Retorno: void
+   */
   public static void removerGrupo(String grupo) {
     grupos.remove(grupo); // Remove o grupo da lista
     historicosMensagens.remove(grupo);
@@ -215,12 +222,14 @@ public class TelaMeusGrupos {
     return historicosMensagens.get(grupo);
   }
 
-  /* ***************************************************************
-  * Metodo: criarCampoComPlaceholder
-  * Funcao: Cria um campo de texto (TextField) com placeholder persistente, que não desaparece ao focar.
-  * Parametros: String placeholder - o texto que será exibido como placeholder
-  * Retorno: TextField - o campo de texto configurado
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: criarCampoComPlaceholder
+   * Funcao: Cria um campo de texto (TextField) com placeholder persistente, que
+   * não desaparece ao focar.
+   * Parametros: String placeholder - o texto que será exibido como placeholder
+   * Retorno: TextField - o campo de texto configurado
+   */
   private TextField criarCampoComPlaceholder(String placeholder) {
     TextField campo = new TextField();
     campo.setPromptText(placeholder);
@@ -239,19 +248,21 @@ public class TelaMeusGrupos {
     return campo;
   }
 
-  /* ***************************************************************
-  * Metodo: enviarAPDUJoin
-  * Funcao: Envia uma APDU de tipo "JOIN" para o servidor TCP, permitindo que o usuário se junte a um grupo.
-  * Parametros: String nomeGrupo - o nome do grupo a ser adicionado
-  * Retorno: void
-  *************************************************************** */
+  /*
+   * ***************************************************************
+   * Metodo: enviarAPDUJoin
+   * Funcao: Envia uma APDU de tipo "JOIN" para o servidor TCP, permitindo que o
+   * usuário se junte a um grupo.
+   * Parametros: String nomeGrupo - o nome do grupo a ser adicionado
+   * Retorno: void
+   */
   private void enviarAPDUJoin(String nomeGrupo) {
     String nomeUsuario = app.getNomeUsuario();
 
     try {
       // Envio via ClienteTCP - agora utilizando o ClienteTCP configurado
       // app.getGruposPeer().enviarAPDUJoin(nomeUsuario, nomeGrupo);
-      for (String grupoPeerIP : app.getPeersConhecidos()){ // envia o join para todos os peers
+      for (String grupoPeerIP : app.getPeersConhecidos()) { // envia o join para todos os peers
         GruposPeer gruposPeer = new GruposPeer(grupoPeerIP, 6789, app);
         gruposPeer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
       }

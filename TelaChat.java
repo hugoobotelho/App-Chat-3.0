@@ -23,6 +23,7 @@ public class TelaChat {
   private VBox listaMensagens; // Container para exibição das mensagens
   private int mensagensJaVistas = 0;
   private boolean threadRodando = true;
+  public boolean isOpen = false;
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
@@ -42,7 +43,7 @@ public class TelaChat {
     botaoVoltar.setGraphic(voltarIcon);
     botaoVoltar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
     botaoVoltar.setOnAction(e -> {
-      threadRodando = false;
+      isOpen = false;
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
       app.getRoot().getChildren().setAll(telaMeusGrupos.getLayout());
     });
@@ -145,12 +146,13 @@ public class TelaChat {
   public void iniciarThreadVisualizacoes() {
     new Thread(() -> {
       while (threadRodando) {
-        int totalMensagens = historicoMensagens.getMensagens().size();
-        if (totalMensagens > mensagensJaVistas) {
-          mensagensJaVistas = totalMensagens;
-          notificarVistoDasMensagens();
+        if (isOpen) {
+          int totalMensagens = historicoMensagens.getMensagens().size();
+          if (totalMensagens > mensagensJaVistas) {
+            mensagensJaVistas = totalMensagens;
+            notificarVistoDasMensagens();
+          }
         }
-
         try {
           Thread.sleep(1000); // verifica a cada segundo
         } catch (InterruptedException e) {
