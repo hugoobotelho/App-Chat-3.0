@@ -45,6 +45,7 @@ public class TelaChat {
     botaoVoltar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
+      iconeFlag = true;
 
       historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); // remove as mensagens de
                                                                                        // visualizacao unica
