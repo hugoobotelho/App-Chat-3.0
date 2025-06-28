@@ -54,9 +54,10 @@ public class PeerUDP {
           System.out.println("Recebi a resposta da minha mensagem: " + resposta);
           if (resposta.startsWith("RECEBIDO|")) {
             String[] partes = resposta.split("\\|");
-            String remetente = partes[1];
-            String grupo = partes[2];
-            String timestamp = partes[3];
+            
+            String grupo = partes[1];
+            String remetente = partes[2];
+            String timestamp = partes[4];
 
             // app.getPeer().getGrupoManager().historicoMensagens.atualizarStatusMensagem(timestamp,
             // grupo);
