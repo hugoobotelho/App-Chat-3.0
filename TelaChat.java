@@ -157,7 +157,7 @@ public class TelaChat {
               EnviarMensagemGrupo enviarMensagemGrupo;
               try {
                 enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
-                String respostaVisto = "RECEBIDO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
+                String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
                     + mensagem.getConteudo() + "|"
                     + mensagem.getTimeStampMensagem();
                 enviarMensagemGrupo.enviarMensagem(respostaVisto);
