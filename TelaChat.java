@@ -21,7 +21,8 @@ public class TelaChat {
   private HistoricoMensagens historicoMensagens;
   private Principal app; // Instância principal do aplicativo
   private VBox listaMensagens; // Container para exibição das mensagens
-  private int mensagensJaVistas = historicoMensagens.getMensagens().size();
+  private int mensagensJaVistas = 0;
+  private boolean threadRodando = true;
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
@@ -41,6 +42,7 @@ public class TelaChat {
     botaoVoltar.setGraphic(voltarIcon);
     botaoVoltar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
     botaoVoltar.setOnAction(e -> {
+      threadRodando = false;
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
       app.getRoot().getChildren().setAll(telaMeusGrupos.getLayout());
     });
@@ -139,22 +141,26 @@ public class TelaChat {
     layout.getChildren().addAll(header, scrollMensagens, enviarMensagemLayout);
 
     new Thread(() -> {
-      while (true) {
+      while (threadRodando) {
+        int totalMensagens = historicoMensagens.getMensagens().size();
+        if (totalMensagens > mensagensJaVistas) {
+          mensagensJaVistas = totalMensagens;
+          notificarVistoDasMensagens();
+        }
+
         try {
           Thread.sleep(1000); // verifica a cada segundo
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-
-        int totalMensagens = historicoMensagens.getMensagens().size();
-        if (totalMensagens > mensagensJaVistas) {
-          mensagensJaVistas = totalMensagens;
-          Platform.runLater(() -> notificarVistoDasMensagens());
-        }
       }
 
     }).start();
 
+  }
+
+  public void setThreadRodando(Boolean threadRodando) {
+    this.threadRodando = threadRodando;
   }
 
   /*

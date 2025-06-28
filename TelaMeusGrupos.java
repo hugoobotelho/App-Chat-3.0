@@ -179,6 +179,8 @@ public class TelaMeusGrupos {
           telasChat.put(grupo, telaChat);
         }
 
+        telaChat.setThreadRodando(true);
+
         // Exibe a tela do chat
         app.getRoot().getChildren().setAll(telaChat.getLayout());
       });
