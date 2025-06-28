@@ -69,8 +69,7 @@ public class PeerUDP {
                 if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
                   if (apdu.equals("RECEBIDO")) {
                     m.incrementaRecebimento(remetente, grupo);
-                  }
-                  else if (apdu.equals("VISTO")){
+                  } else if (apdu.equals("VISTO")) {
                     m.incrementaVistos(remetente, grupo);
                   }
                 }
@@ -153,24 +152,6 @@ public class PeerUDP {
                 k -> new Usuario(nomeUsuario, pacoteRecebido.getAddress(), pacoteRecebido.getPort()));
           }
 
-          // // Adiciona o remetente ao grupo (se necessário)
-          // synchronized (grupoManager) {
-          // grupoManager.adicionarUsuario(nomeGrupo, remetente);
-          // }
-
-          // Reencaminha a mensagem para todos os membros do grupo, exceto o remetente
-          // for (Usuario usuario : grupoManager.obterMembros(nomeGrupo)) {
-          // if (!usuario.equals(remetente)) {
-          // InetAddress enderecoCliente = usuario.getEndereco();
-          // int portaCliente = usuario.getPorta();
-          // byte[] dadosSaida = String.format("SEND|%s|%s|%s", nomeGrupo, nomeUsuario,
-          // conteudoMensagem).getBytes();
-          // DatagramPacket pacoteResposta = new DatagramPacket(dadosSaida,
-          // dadosSaida.length, enderecoCliente, 9876);
-          // servidorSocket.send(pacoteResposta);
-          // }
-          // }
-
           // Envia confirmação de recebimento ao remetente
           String resposta = "RECEBIDO|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + conteudoMensagem + "|"
               + timeStamp;
@@ -183,7 +164,11 @@ public class PeerUDP {
           servidorSocket.send(pacoteResposta);
 
           app.processarMensagemRecebida(mensagemRecebida);
-        } else {
+        } else if (tipoMensagem.equals("SENDUNIQUE")) {
+          app.processarMensagemRecebida(mensagemRecebida);
+        }
+
+        else {
           System.err.println("Tipo de mensagem desconhecido: " + tipoMensagem);
         }
       } catch (Exception e) {

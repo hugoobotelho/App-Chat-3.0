@@ -24,6 +24,7 @@ public class TelaChat {
   private int mensagensJaVistas = 0;
   private boolean threadRodando = true;
   public boolean isOpen = false;
+  private boolean iconeFlag = true;
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
@@ -44,6 +45,11 @@ public class TelaChat {
     botaoVoltar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
+      for (Mensagem m : historicoMensagens.getMensagens()) {
+        if (m.getStatus().equals("unique")){ //remove as mensagens de visualizacao unica quando sair da tela
+          historicoMensagens.getMensagens().remove(m);
+        }
+      }
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
       app.getRoot().getChildren().setAll(telaMeusGrupos.getLayout());
     });
@@ -89,9 +95,29 @@ public class TelaChat {
     VBox.setMargin(enviarMensagemLayout, new Insets(10, 10, 10, 10));
     enviarMensagemLayout.setAlignment(Pos.CENTER_LEFT);
 
-    ImageView iconeMensagem = new ImageView(new Image("/img/enviarIcon.png"));
-    iconeMensagem.setFitHeight(24);
-    iconeMensagem.setFitWidth(24);
+    // Crie o ImageView como antes
+    ImageView iconeVisualizacaoUnica = new ImageView(new Image("/img/visualizacaoUnicaCinza.png"));
+    iconeVisualizacaoUnica.setFitHeight(24);
+    iconeVisualizacaoUnica.setFitWidth(24);
+
+    // Coloque dentro de um Button
+    Button botaoVisualizacaoUnica = new Button();
+    botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
+    botaoVisualizacaoUnica.setStyle(
+        "-fx-background-color: transparent; " +
+            "-fx-cursor: hand; " +
+            "-fx-padding: 10px;" // Aumenta a área clicável sem fundo visível
+    );
+    // botaoVisualizacaoUnica.setMinSize(24, 24); // area de clique maior
+
+    // Alternância de imagem ao clicar
+    botaoVisualizacaoUnica.setOnAction(event -> {
+      iconeFlag = !iconeFlag;
+      String imagemPath = iconeFlag
+          ? "/img/visualizacaoUnicaCinza.png"
+          : "/img/visualizacaoUnicaPreto.png";
+      iconeVisualizacaoUnica.setImage(new Image(imagemPath, false));
+    });
 
     TextField campoMensagem = criarCampoComPlaceholder("Mensagem");
     campoMensagem.setMaxWidth(Double.MAX_VALUE);
@@ -108,15 +134,25 @@ public class TelaChat {
             String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
 
             // Adiciona mensagem ao histórico
-            Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
-                nomeGrupo);
-            historicoMensagens.adicionarMensagem(novaMensagem);
-            // notificarVistoDasMensagens();
 
-            String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
-                + timeStamp;
+            // notificarVistoDasMensagens();
+            String mensagemFormatada;
+            if (iconeFlag) {
+              Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
+                  nomeGrupo);
+              historicoMensagens.adicionarMensagem(novaMensagem);
+              mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
+                  + timeStamp;
+            } else {
+              Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "unique", timeStamp,
+                  nomeGrupo);
+              historicoMensagens.adicionarMensagem(novaMensagem);
+              mensagemFormatada = "SENDUNIQUE|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
+                  + timeStamp;
+            }
+
             // app.getMensagensGruposPeer().enviarMensagem(mensagemFormatada);
-            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo) ) { // enviar para cada peer do
+            for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) { // enviar para cada peer do
                                                                                              // grupo, a mensagem.
               // if (!membro.getNome().equals(app.getNomeUsuario())) {
               EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app,
@@ -138,7 +174,7 @@ public class TelaChat {
       }
     });
 
-    enviarMensagemLayout.getChildren().addAll(iconeMensagem, campoMensagem);
+    enviarMensagemLayout.getChildren().addAll(botaoVisualizacaoUnica, campoMensagem);
     layout.getChildren().addAll(header, scrollMensagens, enviarMensagemLayout);
 
   }
@@ -229,7 +265,7 @@ public class TelaChat {
     // "-fx-max-width: 250px; " +
     // "-fx-wrap-text: true;");
 
-    ImageView checkImageView = new ImageView(mensagem.getStatus());
+    ImageView iconImageView = new ImageView(mensagem.getStatusImage());
     HBox conteudoCheckHBox = new HBox(5);
 
     Label horarioLabel = new Label(mensagem.getHora());
@@ -252,7 +288,7 @@ public class TelaChat {
       Region region = new Region();
       HBox.setHgrow(region, Priority.ALWAYS);
 
-      conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, checkImageView);
+      conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, iconImageView);
 
       conteudoCheckHBox.setAlignment(Pos.CENTER);
 

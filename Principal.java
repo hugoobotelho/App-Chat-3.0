@@ -163,11 +163,11 @@ public class Principal extends Application {
     try {
       // Separar os campos da mensagem
       String[] partes = mensagemRecebida.split("\\|");
-      if (partes.length < 4 || !"SEND".equals(partes[0])) {
+      if (partes.length < 4 || !("SEND".equals(partes[0]) || "SENDUNIQUE".equals(partes[0]))) {
         System.err.println("Formato de mensagem inválido: " + mensagemRecebida);
         return;
       }
-
+      String apdu = partes[0];
       String grupo = partes[1];
       String usuario = partes[2];
       String mensagem = partes[3];
@@ -181,7 +181,15 @@ public class Principal extends Application {
           return;
         }
         String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
-        Mensagem novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp, grupo);
+        Mensagem novaMensagem;
+        if (apdu.equals("SENDUNIQUE")) {
+          novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "unique", timeStamp,
+              grupo);
+
+        } else {
+          novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp,
+              grupo);
+        }
         historico.adicionarMensagem(novaMensagem);
         // telaMeusGrupos.getTelasChat().get(grupo).notificarVistoDasMensagens();
 

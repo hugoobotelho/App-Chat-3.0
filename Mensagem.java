@@ -16,8 +16,9 @@ public class Mensagem {
   Image check = new Image("/img/check.png");
   Image checkDuplo = new Image("/img/checkDuplo.png");
   Image checkVisto = new Image("/img/checkVisto.png");
+  Image iconeVisualizacaoUnica = new Image("/img/visualizacaoUnicaAmarelo.png");
   private int qtdRecebimentos = 0;
-  private int qtdVistos = 0;
+  // private int qtdVistos = 0;
   Principal app;
   private Set<String> membrosVistos = new HashSet<>();
 
@@ -37,7 +38,11 @@ public class Mensagem {
     this.status = status;
   }
 
-  public Image getStatus() {
+  public String getStatus() {
+    return status;
+  }
+
+  public Image getStatusImage() {
     // if (status.equals("check")) {
     // return check;
     // }
@@ -46,6 +51,9 @@ public class Mensagem {
     }
     if (status.equals("checkVisto")) {
       return checkVisto;
+    }
+    if (status.equals("unica")){
+      return iconeVisualizacaoUnica;
     }
     return check;
   }
