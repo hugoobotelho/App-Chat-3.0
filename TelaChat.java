@@ -72,7 +72,6 @@ public class TelaChat {
     listaMensagens = new VBox(10);
     listaMensagens.setStyle("-fx-padding: 10px; -fx-background-color: transparent;");
 
-    atualizarVistos();
 
     renderizarMensagens();
 
@@ -138,6 +137,8 @@ public class TelaChat {
 
     enviarMensagemLayout.getChildren().addAll(iconeMensagem, campoMensagem);
     layout.getChildren().addAll(header, scrollMensagens, enviarMensagemLayout);
+
+    atualizarVistos();
   }
 
   /*
