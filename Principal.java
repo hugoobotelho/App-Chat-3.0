@@ -40,11 +40,11 @@ public class Principal extends Application {
   @Override
   public void start(Stage primaryStage) {
 
-    // app = new Principal();
+    app = new Principal();
 
     peersConhecidos = new HashSet<>();
 
-    peer = new Peer(this);
+    peer = new Peer(app);
 
     Scene scene = new Scene(root, 390, 644);
     primaryStage.setScene(scene);
@@ -61,10 +61,10 @@ public class Principal extends Application {
       System.exit(0);
     });
 
-    telaMeusGrupos = new TelaMeusGrupos(this);
+    telaMeusGrupos = new TelaMeusGrupos(app);
 
     // Mostra a tela inicial ao iniciar o programa
-    TelaInicio telaInicio = new TelaInicio(this);
+    TelaInicio telaInicio = new TelaInicio(app);
     root.getChildren().setAll(telaInicio.getLayout());
 
     // Centralizando o layout da TelaInicio
@@ -181,7 +181,7 @@ public class Principal extends Application {
           return;
         }
         String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
-        Mensagem novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp, grupo);
+        Mensagem novaMensagem = new Mensagem(app, usuario, mensagem, horaAtual, "de outro usuario", timeStamp, grupo);
         historico.adicionarMensagem(novaMensagem);
 
         // Atualizar a interface gráfica na thread da aplicação
