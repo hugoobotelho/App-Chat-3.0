@@ -15,7 +15,8 @@ public class Mensagem {
   private int qtdVistos = 0;
   Principal app;
 
-  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp, String nomeGrupo) {
+  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp,
+      String nomeGrupo) {
     this.app = app;
     this.remetente = remetente;
     this.conteudo = conteudo;
@@ -31,12 +32,12 @@ public class Mensagem {
 
   public Image getStatus() {
     // if (status.equals("check")) {
-    //   return check;
+    // return check;
     // }
-    if (status.equals("checkDuplo")){
+    if (status.equals("checkDuplo")) {
       return checkDuplo;
     }
-    if (status.equals("checkVisto")){
+    if (status.equals("checkVisto")) {
       return checkVisto;
     }
     return check;
@@ -44,12 +45,15 @@ public class Mensagem {
 
   public void incrementaRecebimento(String remetente, String nomeGrupo) {
     System.out.println("Vai incrementar recebimento");
-    if (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).contains(remetente)){
+    // if (app.getGrupos().contains(nomeGrupo) && remetente.equals(app.getNomeUsuario())) {
+    //   qtdVistos++;
+    // }
+    if (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).contains(remetente)) {
       System.out.println("MENSAGEM RECEBIDA POR " + remetente);
       qtdVistos++;
-      if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() -1 )){
-        setStatus("checkDuplo");
-      }
+    }
+    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() - 1)) {
+      setStatus("checkDuplo");
     }
   }
 
