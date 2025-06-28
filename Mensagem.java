@@ -1,4 +1,6 @@
 import java.time.LocalTime;
+import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.image.Image;
 
@@ -45,13 +47,23 @@ public class Mensagem {
 
   public void incrementaRecebimento(String remetente, String nomeGrupo) {
     System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
-    // if (app.getGrupos().contains(nomeGrupo) && remetente.equals(app.getNomeUsuario())) {
-    //   qtdVistos++;
+    // if (app.getGrupos().contains(nomeGrupo) &&
+    // remetente.equals(app.getNomeUsuario())) {
+    // qtdVistos++;
     // }
-    if (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).contains(remetente)) {
-      System.out.println("MENSAGEM RECEBIDA POR " + remetente);
-      qtdVistos++;
+    for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+      // System.out.println("Grupo: " + entry.getKey());
+      if (entry.getKey().equals(nomeGrupo)) {
+        for (Usuario usuario : entry.getValue()) {
+          // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
+          if (usuario.getNome().equals(remetente)) {
+            System.out.println("MENSAGEM RECEBIDA POR " + remetente);
+            qtdVistos++;
+          }
+        }
+      }
     }
+
     if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() - 1)) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();

@@ -95,6 +95,9 @@ public class GrupoManager {
 
   }
 
+  public Map<String, Set<Usuario>> getGrupos() {
+    return grupos;
+  }
   /*
    * ***************************************************************
    * Metodo: obterMembros
