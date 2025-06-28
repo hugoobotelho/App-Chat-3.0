@@ -107,6 +107,7 @@ public class TelaChat {
             Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
                 nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
+            notificarVistoDasMensagens();
 
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
                 + timeStamp;
@@ -147,29 +148,6 @@ public class TelaChat {
    * Retorno: void
    */
   public void renderizarMensagens() {
-    for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-      // criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
-      for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
-        if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
-          for (Usuario usuario : entry.getValue()) {
-            if (usuario.getNome().equals(mensagem.getRemetente())) {
-              String ipRemetente = usuario.getEndereco().getHostAddress();
-              EnviarMensagemGrupo enviarMensagemGrupo;
-              try {
-                enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
-                String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
-                    + mensagem.getConteudo() + "|"
-                    + mensagem.getTimeStampMensagem();
-                enviarMensagemGrupo.enviarMensagem(respostaVisto);
-              } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              }
-            }
-          }
-        }
-      }
-    }
 
     Platform.runLater(() -> {
       listaMensagens.getChildren().clear();
@@ -177,6 +155,29 @@ public class TelaChat {
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
     });
+  }
+
+  public void notificarVistoDasMensagens() {
+    for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+      for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+        if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
+          for (Usuario usuario : entry.getValue()) {
+            if (usuario.getNome().equals(mensagem.getRemetente())) {
+              String ipRemetente = usuario.getEndereco().getHostAddress();
+              try {
+                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
+                String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
+                    + mensagem.getConteudo() + "|"
+                    + mensagem.getTimeStampMensagem();
+                enviarMensagemGrupo.enviarMensagem(respostaVisto);
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /*
