@@ -13,7 +13,7 @@ public class EnviarMensagemGrupo {
     this.app = app;
     this.clienteSocket = new DatagramSocket(); // Socket para comunicação UDP
 
-    this.clienteSocket1 = new DatagramSocket(1234); // Para receber "RECEBIDO"
+    this.clienteSocket1 = new DatagramSocket(2345); // Para receber "RECEBIDO"
 
     this.enderecoServidor = InetAddress.getByName(ipServidor); // Endereço do servidor
     this.portaServidor = portaServidor;

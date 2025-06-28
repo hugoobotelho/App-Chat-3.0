@@ -118,7 +118,7 @@ public class PeerUDP {
               dadosResposta,
               dadosResposta.length,
               pacoteRecebido.getAddress(),
-              pacoteRecebido.getPort());
+              2345);
           servidorSocket.send(pacoteResposta);
 
           app.processarMensagemRecebida(mensagemRecebida);
