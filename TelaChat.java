@@ -71,6 +71,9 @@ public class TelaChat {
     // Lista de Mensagens
     listaMensagens = new VBox(10);
     listaMensagens.setStyle("-fx-padding: 10px; -fx-background-color: transparent;");
+
+    atualizarVistos();
+
     renderizarMensagens();
 
     ScrollPane scrollMensagens = new ScrollPane(listaMensagens);
@@ -147,6 +150,15 @@ public class TelaChat {
    * Retorno: void
    */
   public void renderizarMensagens() {
+    Platform.runLater(() -> {
+      listaMensagens.getChildren().clear();
+      for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+        listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
+      }
+    });
+  }
+
+  public void atualizarVistos() {
     for (Mensagem mensagem : historicoMensagens.getMensagens()) {
       // criar apdu visto aqui e mandar para cada remetente da mentagem, essa apdu
       for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
@@ -170,13 +182,6 @@ public class TelaChat {
         }
       }
     }
-
-    Platform.runLater(() -> {
-      listaMensagens.getChildren().clear();
-      for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-        listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
-      }
-    });
   }
 
   /*
