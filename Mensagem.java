@@ -52,7 +52,7 @@ public class Mensagem {
     if (status.equals("checkVisto")) {
       return checkVisto;
     }
-    if (status.equals("unica")){
+    if (status.equals("unique")){
       return iconeVisualizacaoUnica;
     }
     return check;
