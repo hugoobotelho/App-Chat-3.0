@@ -47,7 +47,7 @@ public class EnviarMensagemGrupo {
 
         // app.getPeer().getGrupoManager().historicoMensagens.atualizarStatusMensagem(timestamp,
         // grupo);
-        if (app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens() != null) {
+        if (app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo) != null) {
           for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
             if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
               m.incrementaRecebimento(remetente, grupo);
