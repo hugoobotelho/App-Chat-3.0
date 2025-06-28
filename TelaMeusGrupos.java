@@ -179,7 +179,7 @@ public class TelaMeusGrupos {
           telasChat.put(grupo, telaChat);
         }
 
-        telaChat.setThreadRodando(true);
+        telaChat.iniciarThreadVisualizacoes();
 
         // Exibe a tela do chat
         app.getRoot().getChildren().setAll(telaChat.getLayout());

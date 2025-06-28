@@ -140,6 +140,9 @@ public class TelaChat {
     enviarMensagemLayout.getChildren().addAll(iconeMensagem, campoMensagem);
     layout.getChildren().addAll(header, scrollMensagens, enviarMensagemLayout);
 
+  }
+
+  public void iniciarThreadVisualizacoes() {
     new Thread(() -> {
       while (threadRodando) {
         int totalMensagens = historicoMensagens.getMensagens().size();
@@ -156,11 +159,6 @@ public class TelaChat {
       }
 
     }).start();
-
-  }
-
-  public void setThreadRodando(Boolean threadRodando) {
-    this.threadRodando = threadRodando;
   }
 
   /*
