@@ -183,7 +183,7 @@ public class Principal extends Application {
         String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
         Mensagem novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp, grupo);
         historico.adicionarMensagem(novaMensagem);
-        telaMeusGrupos.getTelasChat().get(grupo).notificarVistoDasMensagens();
+        // telaMeusGrupos.getTelasChat().get(grupo).notificarVistoDasMensagens();
 
         // Atualizar a interface gráfica na thread da aplicação
         Platform.runLater(() -> {

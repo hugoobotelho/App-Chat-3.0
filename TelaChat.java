@@ -21,6 +21,7 @@ public class TelaChat {
   private HistoricoMensagens historicoMensagens;
   private Principal app; // Instância principal do aplicativo
   private VBox listaMensagens; // Container para exibição das mensagens
+  private int mensagensJaVistas = historicoMensagens.getMensagens().size();
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
@@ -107,7 +108,7 @@ public class TelaChat {
             Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
                 nomeGrupo);
             historicoMensagens.adicionarMensagem(novaMensagem);
-            notificarVistoDasMensagens();
+            // notificarVistoDasMensagens();
 
             String mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
                 + timeStamp;
@@ -136,6 +137,24 @@ public class TelaChat {
 
     enviarMensagemLayout.getChildren().addAll(iconeMensagem, campoMensagem);
     layout.getChildren().addAll(header, scrollMensagens, enviarMensagemLayout);
+
+    new Thread(() -> {
+      while (true) {
+        try {
+          Thread.sleep(1000); // verifica a cada segundo
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
+        int totalMensagens = historicoMensagens.getMensagens().size();
+        if (totalMensagens > mensagensJaVistas) {
+          mensagensJaVistas = totalMensagens;
+          Platform.runLater(() -> notificarVistoDasMensagens());
+        }
+      }
+
+    }).start();
+
   }
 
   /*
