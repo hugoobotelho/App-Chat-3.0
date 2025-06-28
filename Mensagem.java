@@ -64,7 +64,7 @@ public class Mensagem {
       }
     }
 
-    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() - 1)) {
+    if (qtdVistos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
