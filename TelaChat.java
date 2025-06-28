@@ -60,6 +60,7 @@ public class TelaChat {
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
       iconeFlag = true;
+      iconeVisualizacaoUnica.setImage(new Image("/img/visualizacaoUnicaCinza.png"));
       botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
       historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); // remove as mensagens de
                                                                                        // visualizacao unica
