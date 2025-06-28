@@ -45,11 +45,10 @@ public class TelaChat {
     botaoVoltar.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
     botaoVoltar.setOnAction(e -> {
       isOpen = false;
-      for (Mensagem m : historicoMensagens.getMensagens()) {
-        if (m.getStatus().equals("unique")){ //remove as mensagens de visualizacao unica quando sair da tela
-          historicoMensagens.getMensagens().remove(m);
-        }
-      }
+
+      historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); //remove as mensagens de visualizacao unica
+      renderizarMensagens();
+
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
       app.getRoot().getChildren().setAll(telaMeusGrupos.getLayout());
     });
