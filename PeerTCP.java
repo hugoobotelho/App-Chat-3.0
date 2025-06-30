@@ -72,7 +72,7 @@ public class PeerTCP {
 
       } catch (IOException e) {
         System.err.println("Erro de I/O ao processar cliente: " + e.getMessage());
-        
+
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
         System.out.println("Os peers conhecidos sao: " + app.getPeersConhecidos());
         if (app.getPeersConhecidos().contains(conexao.getInetAddress().getHostAddress())) {
@@ -86,9 +86,6 @@ public class PeerTCP {
             }
           }
         }
-      } catch (ClassNotFoundException e) {
-        System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
-      } finally {
 
         try {
           if (entrada != null)
@@ -96,9 +93,22 @@ public class PeerTCP {
           if (saida != null)
             saida.close();
           conexao.close(); // Fechar conexão ao final
-        } catch (IOException e) {
-          System.err.println("Erro ao fechar a conexão: " + e.getMessage());
+        } catch (IOException ex) {
+          System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
         }
+      } catch (ClassNotFoundException e) {
+        System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
+      } finally {
+
+        // try {
+        // if (entrada != null)
+        // entrada.close();
+        // if (saida != null)
+        // saida.close();
+        // conexao.close(); // Fechar conexão ao final
+        // } catch (IOException e) {
+        // System.err.println("Erro ao fechar a conexão: " + e.getMessage());
+        // }
       }
     }
 
