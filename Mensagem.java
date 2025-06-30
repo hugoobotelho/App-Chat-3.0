@@ -92,7 +92,7 @@ public class Mensagem {
         break;
       }
     }
-    if (flag && !status.equals("checkVisto") && (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() >= 1)) {
+    if (flag && !status.equals("checkVisto") && (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() > 1)) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
