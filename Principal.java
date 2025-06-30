@@ -28,6 +28,7 @@ public class Principal extends Application {
   private GruposPeer gruposPeer; // Instância do cliente TCP
   // private EnviarMensagemGrupo enviarMensagemGrupo; // Instância do cliente UDP
   private static Set<String> peersConhecidos;
+  private Set<GruposPeer> peersTCP;
   private Principal app;
   // private DescobrirServidores descobrirServidores;
   private Peer peer;
@@ -43,6 +44,7 @@ public class Principal extends Application {
     // app = new Principal();
 
     peersConhecidos = new HashSet<>();
+    peersTCP = new HashSet<>();
 
     peer = new Peer(this);
 
@@ -332,6 +334,9 @@ public class Principal extends Application {
     return peersConhecidos;
   }
 
+  public Set<GruposPeer> getGrupoPeer () {
+    return peersTCP;
+  }
   /*
    * ***************************************************************
    * Metodo: setServidoresConhecidos
@@ -341,6 +346,10 @@ public class Principal extends Application {
    * Retorno: void
    */
   public void setPeersConhecidos(String novoPeer) {
+    if (!peersConhecidos.contains(novoPeer)){
+      GruposPeer peer = new GruposPeer(novoPeer, 6789, this);
+      peersTCP.add(peer);
+    }
     peersConhecidos.add(novoPeer);
     // if (!peersConhecidos.contains(novoPeer)) {
     // // AtualizarPeers atualizarPeers = new AtualizarPeers(novoPeer, 6789, peer);

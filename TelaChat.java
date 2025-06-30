@@ -328,9 +328,9 @@ public class TelaChat {
   private void enviarAPDULeave(String nomeGrupo) {
     try {
       // app.getGruposPeer().enviarAPDULeave(app.getNomeUsuario(), nomeGrupo);
-      for (String grupoPeerIP : app.getPeersConhecidos()) { // envia o leave para todos os peers
-        GruposPeer gruposPeer = new GruposPeer(grupoPeerIP, 6789, app);
-        gruposPeer.enviarAPDULeave(app.getNomeUsuario(), nomeGrupo);
+      for (GruposPeer peer : app.getGrupoPeer()) { // envia o leave para todos os peers
+        // GruposPeer gruposPeer = new GruposPeer(grupoPeerIP, 6789, app);
+        peer.enviarAPDULeave(app.getNomeUsuario(), nomeGrupo);
       }
     } catch (Exception e) {
       System.err.println("Erro ao enviar APDU Leave: " + e.getMessage());

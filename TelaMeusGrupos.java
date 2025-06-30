@@ -262,9 +262,11 @@ public class TelaMeusGrupos {
     try {
       // Envio via ClienteTCP - agora utilizando o ClienteTCP configurado
       // app.getGruposPeer().enviarAPDUJoin(nomeUsuario, nomeGrupo);
-      for (String grupoPeerIP : app.getPeersConhecidos()) { // envia o join para todos os peers
-        GruposPeer gruposPeer = new GruposPeer(grupoPeerIP, 6789, app);
-        gruposPeer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
+      for (GruposPeer peerConhecido : app.getGrupoPeer()) { // envia o join para todos os peers
+        // GruposPeer gruposPeer = new GruposPeer(peerConhecido, 6789, app);
+        peerConhecido.enviarAPDUJoin(nomeUsuario, nomeGrupo);
+        
+        // enviarAPDUJoin(nomeUsuario, nomeGrupo);
       }
     } catch (Exception e) {
       // Exibir mensagem de erro se falhar ao enviar a APDU

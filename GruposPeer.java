@@ -12,12 +12,22 @@ public class GruposPeer {
   private int porta;
   private int indiceAtual = 0;
   private Principal app;
+  private Socket socket;
 
   // Construtor
   public GruposPeer(String host, int porta, Principal app) {
     this.host = host;
     this.porta = porta;
     this.app = app;
+    try {
+      socket = new Socket(host, porta);
+    } catch (UnknownHostException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /*
@@ -31,7 +41,7 @@ public class GruposPeer {
    * Retorno: void
    */
   private void conectarESalvarAPDU(String tipoMensagem, String nomeUsuario, String nomeGrupo) {
-    try (Socket socket = new Socket(host, porta)) {
+    try {
       System.out.println("Conectado ao servidor " + host + ":" + porta);
       // app.setIpServidor(host); // atualiza o servidor ativo
 

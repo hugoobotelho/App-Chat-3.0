@@ -61,16 +61,17 @@ public class PeerTCP {
       ObjectOutputStream saida = null;
       try {
         entrada = new ObjectInputStream(conexao.getInputStream());
-        String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do cliente
-        System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
+        while (true) {
+          String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do cliente
+          System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
-        String resposta = processarMensagem(mensagemRecebida, conexao);
+          String resposta = processarMensagem(mensagemRecebida, conexao);
 
-        saida = new ObjectOutputStream(conexao.getOutputStream());
-        saida.writeObject(resposta); // Envia a resposta
-        saida.flush(); // Garante que a resposta será enviada ao cliente
-
-      } catch (IOException e) {
+          saida = new ObjectOutputStream(conexao.getOutputStream());
+          saida.writeObject(resposta); // Envia a resposta
+          saida.flush(); // Garante que a resposta será enviada ao cliente
+        }
+      } catch (Exception e) {
         System.err.println("Erro de I/O ao processar cliente: " + e.getMessage());
 
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
@@ -96,20 +97,21 @@ public class PeerTCP {
         } catch (IOException ex) {
           System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
         }
-      } catch (ClassNotFoundException e) {
-        System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
-      } finally {
-
-        // try {
-        // if (entrada != null)
-        // entrada.close();
-        // if (saida != null)
-        // saida.close();
-        // conexao.close(); // Fechar conexão ao final
-        // } catch (IOException e) {
-        // System.err.println("Erro ao fechar a conexão: " + e.getMessage());
-        // }
       }
+      // catch (ClassNotFoundException e) {
+      // System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
+      // } finally {
+
+      // // try {
+      // // if (entrada != null)
+      // // entrada.close();
+      // // if (saida != null)
+      // // saida.close();
+      // // conexao.close(); // Fechar conexão ao final
+      // // } catch (IOException e) {
+      // // System.err.println("Erro ao fechar a conexão: " + e.getMessage());
+      // // }
+      // }
     }
 
     /*
