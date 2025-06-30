@@ -25,6 +25,7 @@ public class TelaChat {
   private boolean threadRodando = true;
   public boolean isOpen = false;
   private boolean iconeFlag = true;
+  private ScrollPane scrollMensagens;
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
@@ -99,7 +100,7 @@ public class TelaChat {
     listaMensagens.setStyle("-fx-padding: 10px; -fx-background-color: transparent;");
     renderizarMensagens();
 
-    ScrollPane scrollMensagens = new ScrollPane(listaMensagens);
+    scrollMensagens = new ScrollPane(listaMensagens);
     scrollMensagens.setStyle("-fx-background: #F5F5F5; -fx-border-color: #F5F5F5;");
     scrollMensagens.setFitToWidth(true);
     scrollMensagens.setPrefHeight(500);
@@ -221,6 +222,7 @@ public class TelaChat {
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
+      scrollMensagens.setVvalue(1.0);
     });
   }
 
