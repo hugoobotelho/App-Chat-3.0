@@ -25,25 +25,25 @@ public class GrupoManager {
   public synchronized void adicionarUsuario(String nomeGrupo, Usuario usuario, Boolean isUpdate) {
     grupos.computeIfAbsent(nomeGrupo, k -> new HashSet<>()).add(usuario);
     // if (!isUpdate) {
-    //   Set<AtualizarPeers> peers = app.getPeersTCP();
-    //   if (peers != null) {
-    //     List<AtualizarPeers> peerTCP = new ArrayList<>(peers);
-    //     for (AtualizarPeers peer : peerTCP) {
-    //       for (String message : app.getMessageLog()) {
-    //         String[] partes = message.split("\\|");
-    //         String tipo = partes[0].trim();
-    //         String nomeUsuario = partes[1].trim();
-    //         String nomeDoGrupo = partes[2].trim();
-    //         String timeStamp = partes[3].trim();
-    //         if (tipo.equals("JOIN")) {
-    //           peer.enviarAPDUJoin(nomeUsuario, nomeDoGrupo, timeStamp);
-    //         } else if (tipo.equals("LEAVE")) {
-    //           peer.enviarAPDULeave(nomeUsuario, nomeDoGrupo, timeStamp);
-    //         }
-    //       }
-    //       // servidor.enviarAPDUJoin(nomeGrupo, nomeGrupo);
-    //     }
-    //   }
+    // Set<AtualizarPeers> peers = app.getPeersTCP();
+    // if (peers != null) {
+    // List<AtualizarPeers> peerTCP = new ArrayList<>(peers);
+    // for (AtualizarPeers peer : peerTCP) {
+    // for (String message : app.getMessageLog()) {
+    // String[] partes = message.split("\\|");
+    // String tipo = partes[0].trim();
+    // String nomeUsuario = partes[1].trim();
+    // String nomeDoGrupo = partes[2].trim();
+    // String timeStamp = partes[3].trim();
+    // if (tipo.equals("JOIN")) {
+    // peer.enviarAPDUJoin(nomeUsuario, nomeDoGrupo, timeStamp);
+    // } else if (tipo.equals("LEAVE")) {
+    // peer.enviarAPDULeave(nomeUsuario, nomeDoGrupo, timeStamp);
+    // }
+    // }
+    // // servidor.enviarAPDUJoin(nomeGrupo, nomeGrupo);
+    // }
+    // }
     // }
 
     imprimirGrupos();
@@ -61,7 +61,7 @@ public class GrupoManager {
    * Usuario usuario - usuário que será removido
    * Retorno: void
    */
-  public synchronized void removerUsuario(String nomeGrupo, Usuario usuario, Boolean isUpdate) {
+  public synchronized void removerUsuario(String nomeGrupo, Usuario usuario) {
     if (grupos.containsKey(nomeGrupo)) {
       grupos.get(nomeGrupo).remove(usuario);
       // Remove o grupo se ele estiver vazio
@@ -69,35 +69,35 @@ public class GrupoManager {
         grupos.remove(nomeGrupo);
       }
     }
-    // if (!isUpdate) {
-    //   Set<AtualizarPeers> peers = app.getPeersTCP();
-    //   if (peers != null) {
-    //     List<AtualizarPeers> peersTCP = new ArrayList<>(peers);
-    //     for (AtualizarPeers peer : peersTCP) {
-    //       for (String message : app.getMessageLog()) {
-    //         String[] partes = message.split("\\|");
-    //         String tipo = partes[0].trim();
-    //         String nomeUsuario = partes[1].trim();
-    //         String nomeDoGrupo = partes[2].trim();
-    //         String timeStamp = partes[3].trim();
-    //         if (tipo.equals("JOIN")) {
-    //           peer.enviarAPDUJoin(nomeUsuario, nomeDoGrupo, timeStamp);
-    //         } else if (tipo.equals("LEAVE")) {
-    //           peer.enviarAPDULeave(nomeUsuario, nomeDoGrupo, timeStamp);
-    //         }
-    //       }
-    //     }
-    //     // servidor.enviarAPDULeave(nomeGrupo, nomeGrupo);
-    //   }
-    // }
-    
+
     imprimirGrupos();
 
+  }
+
+  public void removerUsuarioTodosGrupos(String nomeUsuario) {
+    System.out.println("USUARIO: " + nomeUsuario + " caiu. Removendo ele de todos os grupos...");
+    ArrayList<String> gruposQueFazParte = new ArrayList<>();
+    Usuario user = null;
+    for (String nomeGrupo : grupos.keySet()) {
+      for (Usuario u : grupos.get(nomeGrupo)) {
+        if (u.getNome().equals(nomeUsuario)) {
+          user = u;
+          // grupos.get(nomeGrupo).remove(user);
+          gruposQueFazParte.add(nomeGrupo);
+        }
+      }
+    }
+    if (user != null) {
+      for (String nomeGrupo : gruposQueFazParte) {
+        removerUsuario(nomeGrupo, user);
+      }
+    }
   }
 
   public Map<String, Set<Usuario>> getGrupos() {
     return grupos;
   }
+
   /*
    * ***************************************************************
    * Metodo: obterMembros

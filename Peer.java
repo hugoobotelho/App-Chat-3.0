@@ -58,7 +58,7 @@ public class Peer {
 
     // Inicia o servidor TCP em uma thread separada
     Thread peerTCPThread = new Thread(() -> {
-      PeerTCP peerTCP = new PeerTCP(grupoManager, usuarios, peer);
+      PeerTCP peerTCP = new PeerTCP(app, grupoManager, usuarios, peer);
       peerTCP.iniciar();
     });
 

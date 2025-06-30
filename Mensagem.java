@@ -21,7 +21,7 @@ public class Mensagem {
   // private int qtdVistos = 0;
   Principal app;
   private Set<String> membrosVistos = new HashSet<>();
-
+  private Set<String> membrosRecebidos = new HashSet<>();
 
   public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp,
       String nomeGrupo) {
@@ -52,7 +52,7 @@ public class Mensagem {
     if (status.equals("checkVisto")) {
       return checkVisto;
     }
-    if (status.equals("unique")){
+    if (status.equals("unique")) {
       return iconeVisualizacaoUnica;
     }
     return check;
@@ -71,19 +71,34 @@ public class Mensagem {
           // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
           if (usuario.getNome().equals(remetente)) {
             System.out.println("MENSAGEM RECEBIDA POR " + remetente);
-            qtdRecebimentos++;
+            // qtdRecebimentos++;
+            membrosRecebidos.add(remetente);
           }
         }
       }
     }
 
-    if (qtdRecebimentos == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() ) && !status.equals("checkVisto")) {
+    // if (qtdRecebimentos ==
+    // (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())
+    // && !status.equals("checkVisto")) {
+    // setStatus("checkDuplo");
+    // app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
+    // }
+
+    boolean flag = true;
+    for (Usuario user : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) {
+      if (!membrosRecebidos.contains(user.getNome())) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag && !status.equals("checkVisto") && (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() >= 1)) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
   }
 
-    public void incrementaVistos(String remetente, String nomeGrupo) {
+  public void incrementaVistos(String remetente, String nomeGrupo) {
     System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
     // if (app.getGrupos().contains(nomeGrupo) &&
     // remetente.equals(app.getNomeUsuario())) {
@@ -103,7 +118,19 @@ public class Mensagem {
       }
     }
 
-    if (membrosVistos.size() == (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
+    // if (membrosVistos.size() ==
+    // (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
+    // setStatus("checkVisto");
+    // app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
+    // }
+    boolean flag = true;
+    for (Usuario user : app.getPeer().getGrupoManager().obterMembros(nomeGrupo)) {
+      if (!membrosVistos.contains(user.getNome())) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) {
       setStatus("checkVisto");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }

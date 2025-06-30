@@ -8,8 +8,10 @@ public class PeerTCP {
   private final GrupoManager grupoManager;
   private final Map<String, Usuario> usuarios;
   private Peer peer;
+  private Principal app;
 
-  public PeerTCP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Peer peer) {
+  public PeerTCP(Principal app, GrupoManager grupoManager, Map<String, Usuario> usuarios, Peer peer) {
+    this.app = app;
     this.grupoManager = grupoManager;
     this.usuarios = usuarios;
     this.peer = peer;
@@ -73,6 +75,14 @@ public class PeerTCP {
       } catch (ClassNotFoundException e) {
         System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
       } finally {
+
+        if (app.getPeersConhecidos().contains(conexao.getInetAddress().getHostAddress())) {
+          for (String nomeUsuario : app.getPeer().getUsuarios().keySet()) {
+            if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().equals(conexao.getInetAddress().getHostAddress())) {
+              grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
+            }
+          }
+        }
         try {
           if (entrada != null)
             entrada.close();
@@ -111,7 +121,7 @@ public class PeerTCP {
       }
 
       synchronized (grupoManager) {
-        // String newMessage; 
+        // String newMessage;
         String mensagemComTimestamp;
         switch (tipo.toUpperCase()) {
           case "JOIN":
@@ -128,26 +138,28 @@ public class PeerTCP {
 
             // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
             if (grupoManager.grupoExiste(nomeGrupo)) {
-              grupoManager.removerUsuario(nomeGrupo, usuario, false);
+              grupoManager.removerUsuario(nomeGrupo, usuario);
               return "Usuário " + nomeUsuario + " removido do grupo " + nomeGrupo;
             } else {
               return "Erro: Grupo " + nomeGrupo + " não existe.";
             }
-          // case "ATUALIZAR_JOIN":
-          //   // newMessage = "JOIN|" + nomeUsuario + "|" + nomeGrupo;
-          //   peer.setMessageLog(mensagem);
-          //   grupoManager.adicionarUsuario(nomeGrupo, usuario, true);
-          //   return "Fui atualizado com Usuário " + nomeUsuario + " adicionado ao grupo " + nomeGrupo;
+            // case "ATUALIZAR_JOIN":
+            // // newMessage = "JOIN|" + nomeUsuario + "|" + nomeGrupo;
+            // peer.setMessageLog(mensagem);
+            // grupoManager.adicionarUsuario(nomeGrupo, usuario, true);
+            // return "Fui atualizado com Usuário " + nomeUsuario + " adicionado ao grupo "
+            // + nomeGrupo;
 
-          // case "ATUALIZAR_LEAVE":
-          //   // newMessage = "LEAVE|" + nomeUsuario + "|" + nomeGrupo;
-          //   peer.setMessageLog(mensagem);
-          //   if (grupoManager.grupoExiste(nomeGrupo)) {
-          //     grupoManager.removerUsuario(nomeGrupo, usuario, true);
-          //     return "Fui atualizado com Usuário " + nomeUsuario + " removido do grupo " + nomeGrupo;
-          //   } else {
-          //     return "Erro: Grupo " + nomeGrupo + " não existe.";
-          //   }
+            // case "ATUALIZAR_LEAVE":
+            // // newMessage = "LEAVE|" + nomeUsuario + "|" + nomeGrupo;
+            // peer.setMessageLog(mensagem);
+            // if (grupoManager.grupoExiste(nomeGrupo)) {
+            // grupoManager.removerUsuario(nomeGrupo, usuario, true);
+            // return "Fui atualizado com Usuário " + nomeUsuario + " removido do grupo " +
+            // nomeGrupo;
+            // } else {
+            // return "Erro: Grupo " + nomeGrupo + " não existe.";
+            // }
 
           default:
             return "Erro: Tipo de mensagem desconhecido. Use JOIN ou LEAVE.";
