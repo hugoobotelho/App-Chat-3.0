@@ -72,22 +72,24 @@ public class PeerTCP {
 
       } catch (IOException e) {
         System.err.println("Erro de I/O ao processar cliente: " + e.getMessage());
-      } catch (ClassNotFoundException e) {
-        System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
-      } finally {
-
+        
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
         System.out.println("Os peers conhecidos sao: " + app.getPeersConhecidos());
         if (app.getPeersConhecidos().contains(conexao.getInetAddress().getHostAddress())) {
           System.out.println("Vai verificar qual eh o nome do usuario");
           for (String nomeUsuario : app.getPeer().getUsuarios().keySet()) {
-            System.out.println(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco());
-            if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().equals(conexao.getInetAddress().getHostAddress())) {
+            System.out.println(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
+            if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress()
+                .equals(conexao.getInetAddress().getHostAddress())) {
               System.out.println("Vai chamar a funcao remover usuario de todos os grupos: " + nomeUsuario);
               grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
             }
           }
         }
+      } catch (ClassNotFoundException e) {
+        System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
+      } finally {
+
         try {
           if (entrada != null)
             entrada.close();
