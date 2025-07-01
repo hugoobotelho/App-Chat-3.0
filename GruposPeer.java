@@ -13,6 +13,8 @@ public class GruposPeer {
   private int indiceAtual = 0;
   private Principal app;
   private Socket socket;
+  private ObjectOutputStream saida;
+  private ObjectInputStream entrada;
 
   // Construtor
   public GruposPeer(String host, int porta, Principal app) {
@@ -21,6 +23,8 @@ public class GruposPeer {
     this.app = app;
     try {
       socket = new Socket(host, porta);
+      saida = new ObjectOutputStream(socket.getOutputStream());
+      entrada = new ObjectInputStream(socket.getInputStream());
     } catch (UnknownHostException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -46,14 +50,14 @@ public class GruposPeer {
       // app.setIpServidor(host); // atualiza o servidor ativo
 
       // Envia a mensagem
-      ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
+      // ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
       String mensagem = tipoMensagem + "|" + nomeUsuario + "|" + nomeGrupo;
       saida.writeObject(mensagem);
       saida.flush();
       System.out.println("Mensagem enviada: " + mensagem);
 
       // Aguarda a resposta do servidor
-      ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+      // ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
       String resposta = (String) entrada.readObject(); // Lê a resposta
       System.out.println("Resposta do servidor: " + resposta);
     } catch (IOException | ClassNotFoundException e) {
