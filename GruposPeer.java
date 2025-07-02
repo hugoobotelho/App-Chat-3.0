@@ -35,6 +35,10 @@ public class GruposPeer {
     }
   }
 
+  public String getHost() {
+    return host;
+  }
+
   /*
    * ***************************************************************
    * Metodo: conectarESalvarAPDU

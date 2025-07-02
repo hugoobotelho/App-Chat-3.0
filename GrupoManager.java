@@ -66,7 +66,9 @@ public class GrupoManager {
   public synchronized void removerUsuario(String nomeGrupo, Usuario usuario) {
     if (grupos.containsKey(nomeGrupo)) {
       grupos.get(nomeGrupo).remove(usuario);
-      appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).mostrarMensagemDeRemovido(usuario.getNome());
+      if (appPrincipal.getTelaMeusGrupos().getTelasChat().containsKey(nomeGrupo)) {
+        appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).mostrarMensagemDeRemovido(usuario.getNome());
+      }
       // Remove o grupo se ele estiver vazio
       if (grupos.get(nomeGrupo).isEmpty()) {
         grupos.remove(nomeGrupo);
@@ -78,7 +80,7 @@ public class GrupoManager {
   }
 
   public void removerUsuarioTodosGrupos(String nomeUsuario) {
-    System.out.println("USUARIO: " + nomeUsuario + " caiu. Removendo ele de todos os grupos...");
+    System.out.println("USUARIO: " + nomeUsuario + " caiu. Removendo ele de todos os grupos... ");
     ArrayList<String> gruposQueFazParte = new ArrayList<>();
     Usuario user = null;
     for (String nomeGrupo : grupos.keySet()) {

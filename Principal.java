@@ -334,6 +334,16 @@ public class Principal extends Application {
     return peersConhecidos;
   }
 
+  public void removePeerConhecido(String ipPeer) {
+    peersConhecidos.remove(ipPeer);
+    peersTCP.removeIf(p -> p.getHost().equals(ipPeer));
+    // for (GruposPeer peer : peersTCP) {
+    //   if (peer.getHost().equals(ipPeer)) {
+    //     peersTCP.remove(peer);
+    //   }
+    // }
+  }
+
   public Set<GruposPeer> getGrupoPeer() {
     return peersTCP;
   }

@@ -84,6 +84,7 @@ public class PeerTCP {
               if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress()
                   .equals(conexao.getInetAddress().getHostAddress())) {
                 System.out.println("Vai chamar a funcao remover usuario de todos os grupos: " + nomeUsuario);
+                app.removePeerConhecido(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
                 grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
               }
             }
