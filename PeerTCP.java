@@ -58,18 +58,18 @@ public class PeerTCP {
     @Override
     public void run() {
       ObjectInputStream entrada = null;
-      ObjectOutputStream saida = null;
+      // ObjectOutputStream saida = null;
       try {
         entrada = new ObjectInputStream(conexao.getInputStream());
         while (true) {
           String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do cliente
           System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
-          String resposta = processarMensagem(mensagemRecebida, conexao);
+          // String resposta = processarMensagem(mensagemRecebida, conexao);
 
-          saida = new ObjectOutputStream(conexao.getOutputStream());
-          saida.writeObject(resposta); // Envia a resposta
-          saida.flush(); // Garante que a resposta será enviada ao cliente
+          // saida = new ObjectOutputStream(conexao.getOutputStream());
+          // saida.writeObject(resposta); // Envia a resposta
+          // saida.flush(); // Garante que a resposta será enviada ao cliente
         }
       } catch (Exception e) {
         System.err.println("Erro de I/O ao processar cliente: " + e.getMessage());
@@ -93,8 +93,8 @@ public class PeerTCP {
         try {
           if (entrada != null)
             entrada.close();
-          if (saida != null)
-            saida.close();
+          // if (saida != null)
+          //   saida.close();
           conexao.close(); // Fechar conexão ao final
         } catch (IOException ex) {
           System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
