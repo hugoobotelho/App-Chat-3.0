@@ -147,7 +147,6 @@ public class Mensagem {
         }
       }
     }
-
     // if (membrosVistos.size() ==
     // (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size())) {
     // setStatus("checkVisto");
