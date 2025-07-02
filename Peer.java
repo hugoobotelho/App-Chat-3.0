@@ -42,7 +42,7 @@ public class Peer {
     descobrirPeers = new DescobrirPeers(app);
     descobrirPeers.iniciarDescobrimento();
 
-    grupoManager = new GrupoManager(this);
+    grupoManager = new GrupoManager(this, app);
 
     // Inicia o peer UDP em uma thread separada
     Thread peerUDPThread = new Thread(() -> {

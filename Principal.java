@@ -185,12 +185,12 @@ public class Principal extends Application {
         String horaAtual = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
         Mensagem novaMensagem;
         if (apdu.equals("SENDUNIQUE")) {
-          novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "unique", timeStamp,
-              grupo);
+          novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "check", timeStamp,
+              grupo, true, false);
 
         } else {
           novaMensagem = new Mensagem(this, usuario, mensagem, horaAtual, "de outro usuario", timeStamp,
-              grupo);
+              grupo, false, false);
         }
         historico.adicionarMensagem(novaMensagem);
         // telaMeusGrupos.getTelasChat().get(grupo).notificarVistoDasMensagens();

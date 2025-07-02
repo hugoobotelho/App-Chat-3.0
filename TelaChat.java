@@ -63,8 +63,8 @@ public class TelaChat {
       iconeFlag = true;
       iconeVisualizacaoUnica.setImage(new Image("/img/visualizacaoUnicaCinza.png"));
       botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
-      historicoMensagens.getMensagens().removeIf(m -> m.getStatus().equals("unique")); // remove as mensagens de
-                                                                                       // visualizacao unica
+      historicoMensagens.getMensagens().removeIf(m -> m.getVisualizacaoUnica()); // remove as mensagens de
+                                                                                 // visualizacao unica
       renderizarMensagens();
 
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);
@@ -98,12 +98,19 @@ public class TelaChat {
     // Lista de Mensagens
     listaMensagens = new VBox(10);
     listaMensagens.setStyle("-fx-padding: 10px; -fx-background-color: transparent;");
+
+    listaMensagens.heightProperty().addListener((obs, oldVal, newVal) -> {
+      scrollMensagens.setVvalue(1.0); // rola para o final sempre que a altura muda
+    });
+
     renderizarMensagens();
 
     scrollMensagens = new ScrollPane(listaMensagens);
     scrollMensagens.setStyle("-fx-background: #F5F5F5; -fx-border-color: #F5F5F5;");
     scrollMensagens.setFitToWidth(true);
     scrollMensagens.setPrefHeight(500);
+    scrollMensagens.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollMensagens.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
     // Campo para Envio de Mensagens
     HBox enviarMensagemLayout = new HBox(10);
@@ -143,13 +150,13 @@ public class TelaChat {
             String mensagemFormatada;
             if (iconeFlag) {
               Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
-                  nomeGrupo);
+                  nomeGrupo, false, false);
               historicoMensagens.adicionarMensagem(novaMensagem);
               mensagemFormatada = "SEND|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
                   + timeStamp;
             } else {
-              Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "unique", timeStamp,
-                  nomeGrupo);
+              Mensagem novaMensagem = new Mensagem(app, app.getNomeUsuario(), mensagem, horaAtual, "check", timeStamp,
+                  nomeGrupo, true, false);
               historicoMensagens.adicionarMensagem(novaMensagem);
               mensagemFormatada = "SENDUNIQUE|" + nomeGrupo + "|" + app.getNomeUsuario() + "|" + mensagem + "|"
                   + timeStamp;
@@ -188,7 +195,7 @@ public class TelaChat {
       while (threadRodando) {
         if (isOpen) {
           long totalNaoUnicas = historicoMensagens.getMensagens().stream()
-              .filter(m -> !m.getStatus().equals("unique"))
+              .filter(m -> !m.getVisualizacaoUnica())
               .count();
 
           if (totalNaoUnicas > mensagensJaVistas) {
@@ -222,32 +229,35 @@ public class TelaChat {
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
-      scrollMensagens.setVvalue(1.0);
+      // Garante que o scroll só aconteça depois do layout estar renderizado
+      // Platform.runLater(() -> {
+      // scrollMensagens.setVvalue(1.0); // Scrolla para o fim
+      // });
     });
   }
 
   public void notificarVistoDasMensagens() {
     for (Mensagem mensagem : historicoMensagens.getMensagens()) {
-      if (!mensagem.getStatus().equals("unique")) {
-        for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
-          if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
-            for (Usuario usuario : entry.getValue()) {
-              if (usuario.getNome().equals(mensagem.getRemetente())) {
-                String ipRemetente = usuario.getEndereco().getHostAddress();
-                try {
-                  EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
-                  String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
-                      + mensagem.getConteudo() + "|"
-                      + mensagem.getTimeStampMensagem();
-                  enviarMensagemGrupo.enviarMensagem(respostaVisto);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
+      // if (!mensagem.getStatus().equals("unique")) {
+      for (Map.Entry<String, Set<Usuario>> entry : app.getPeer().getGrupoManager().getGrupos().entrySet()) {
+        if (entry.getKey().equals(mensagem.getNomeGrupoMensagem())) {
+          for (Usuario usuario : entry.getValue()) {
+            if (usuario.getNome().equals(mensagem.getRemetente())) {
+              String ipRemetente = usuario.getEndereco().getHostAddress();
+              try {
+                EnviarMensagemGrupo enviarMensagemGrupo = new EnviarMensagemGrupo(app, ipRemetente, 2345);
+                String respostaVisto = "VISTO|" + mensagem.getNomeGrupoMensagem() + "|" + app.getNomeUsuario() + "|"
+                    + mensagem.getConteudo() + "|"
+                    + mensagem.getTimeStampMensagem();
+                enviarMensagemGrupo.enviarMensagem(respostaVisto);
+              } catch (Exception e) {
+                e.printStackTrace();
               }
             }
           }
         }
       }
+      // }
     }
   }
 
@@ -260,63 +270,78 @@ public class TelaChat {
    * Retorno: VBox - layout que contém a estrutura da mensagem
    */
   private VBox criarComponenteMensagem(Mensagem mensagem) {
-    VBox componenteMensagem = new VBox(5);
+    if (!mensagem.isRemove()) {
+      VBox componenteMensagem = new VBox(5);
 
-    Label remetenteLabel = new Label(mensagem.getRemetente());
-    remetenteLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
+      Label remetenteLabel = new Label(mensagem.getRemetente());
+      remetenteLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
 
-    Label conteudoMensagem = new Label(mensagem.getConteudo());
-    // conteudoMensagem.setStyle(
-    // "-fx-background-color: #333333; " +
-    // "-fx-text-fill: #E5AF18; " +
-    // "-fx-font-size: 16px; " +
-    // "-fx-padding: 10px; " +
-    // "-fx-background-radius: 10px; " +
-    // "-fx-max-width: 250px; " +
-    // "-fx-wrap-text: true;");
+      Label conteudoMensagem = new Label(mensagem.getConteudo());
+      // conteudoMensagem.setStyle(
+      // "-fx-background-color: #333333; " +
+      // "-fx-text-fill: #E5AF18; " +
+      // "-fx-font-size: 16px; " +
+      // "-fx-padding: 10px; " +
+      // "-fx-background-radius: 10px; " +
+      // "-fx-max-width: 250px; " +
+      // "-fx-wrap-text: true;");
 
-    ImageView iconImageView = new ImageView(mensagem.getStatusImage());
-    HBox conteudoCheckHBox = new HBox(5);
+      ImageView iconImageView = new ImageView(mensagem.getStatusImage());
+      HBox conteudoCheckHBox = new HBox(5);
 
-    Label horarioLabel = new Label(mensagem.getHora());
-    horarioLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
+      Label horarioLabel = new Label(mensagem.getHora());
+      horarioLabel.setStyle("-fx-font-weight: 500; -fx-text-fill: #B4B4B4;");
 
-    if (mensagem.getRemetente().equals(app.getNomeUsuario())) {
-      componenteMensagem.setStyle("-fx-alignment: top-right;");
-      conteudoCheckHBox.setStyle(
-          "-fx-background-color: #E5AF18; " +
-              "-fx-text-fill: #333333; " +
-              "-fx-font-size: 16px; " +
-              "-fx-padding: 10px; " +
-              "-fx-background-radius: 10px; " +
-              "-fx-max-width: 250px; " +
-              "-fx-wrap-text: true;");
-      conteudoMensagem.setStyle(
-          "-fx-max-width: 240px;" +
-              "-fx-wrap-text: true;");
+      if (mensagem.getRemetente().equals(app.getNomeUsuario())) {
+        componenteMensagem.setStyle("-fx-alignment: top-right;");
+        conteudoCheckHBox.setStyle(
+            "-fx-background-color: #E5AF18; " +
+                "-fx-text-fill: #333333; " +
+                "-fx-font-size: 16px; " +
+                "-fx-padding: 10px; " +
+                "-fx-background-radius: 10px; " +
+                "-fx-max-width: 250px; " +
+                "-fx-wrap-text: true;");
+        conteudoMensagem.setStyle(
+            "-fx-max-width: 240px;" +
+                "-fx-wrap-text: true;");
 
-      Region region = new Region();
-      HBox.setHgrow(region, Priority.ALWAYS);
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS);
 
-      conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, iconImageView);
+        conteudoCheckHBox.getChildren().addAll(conteudoMensagem, region, iconImageView);
 
-      conteudoCheckHBox.setAlignment(Pos.CENTER);
+        conteudoCheckHBox.setAlignment(Pos.CENTER);
 
-      componenteMensagem.getChildren().addAll(remetenteLabel, conteudoCheckHBox, horarioLabel);
+        componenteMensagem.getChildren().addAll(remetenteLabel, conteudoCheckHBox, horarioLabel);
+      } else {
+        conteudoMensagem.setStyle(
+            "-fx-background-color: #333333; " +
+                "-fx-text-fill: #E5AF18; " +
+                "-fx-font-size: 16px; " +
+                "-fx-padding: 10px; " +
+                "-fx-background-radius: 10px; " +
+                "-fx-max-width: 250px; " +
+                "-fx-wrap-text: true;");
+        componenteMensagem.setStyle("-fx-alignment: top-left;");
+        componenteMensagem.getChildren().addAll(remetenteLabel, conteudoMensagem, horarioLabel);
+      }
+      return componenteMensagem;
     } else {
-      conteudoMensagem.setStyle(
-          "-fx-background-color: #333333; " +
-              "-fx-text-fill: #E5AF18; " +
-              "-fx-font-size: 16px; " +
-              "-fx-padding: 10px; " +
-              "-fx-background-radius: 10px; " +
-              "-fx-max-width: 250px; " +
-              "-fx-wrap-text: true;");
-      componenteMensagem.setStyle("-fx-alignment: top-left;");
-      componenteMensagem.getChildren().addAll(remetenteLabel, conteudoMensagem, horarioLabel);
+      VBox componenteMensagem = new VBox(5);
+      Label mensagemRemocao = new Label("Usuario: " + mensagem.getNomeUsuarioASerRemovido() + " saiu do grupo");
+      mensagemRemocao.setStyle("-fx-text-fill: #B4B4B4; -fx-font-size: 16px; -fx-font-style: italic;");
+      mensagemRemocao.setAlignment(Pos.CENTER);
+      componenteMensagem.getChildren().addAll(mensagemRemocao);
+      return componenteMensagem;
     }
 
-    return componenteMensagem;
+  }
+
+  public void mostrarMensagemDeRemovido(String nomeUsuario) {
+    Mensagem mensagemDeRemocao = new Mensagem(nomeUsuario, true);
+    historicoMensagens.adicionarMensagem(mensagemDeRemocao);
+    renderizarMensagens();
   }
 
   /*

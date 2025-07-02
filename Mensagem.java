@@ -17,14 +17,17 @@ public class Mensagem {
   Image checkDuplo = new Image("/img/checkDuplo.png");
   Image checkVisto = new Image("/img/checkVisto.png");
   Image iconeVisualizacaoUnica = new Image("/img/visualizacaoUnicaAmarelo.png");
+  Boolean visualizacaoUnica;
   private int qtdRecebimentos = 0;
   // private int qtdVistos = 0;
   Principal app;
   private Set<String> membrosVistos = new HashSet<>();
   private Set<String> membrosRecebidos = new HashSet<>();
 
-  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp,
-      String nomeGrupo) {
+  private String nomeUsuarioASerRemovido;
+  private Boolean remocao;
+
+  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp, String nomeGrupo, Boolean visualizacaoUnica, Boolean remocao) {
     this.app = app;
     this.remetente = remetente;
     this.conteudo = conteudo;
@@ -32,14 +35,33 @@ public class Mensagem {
     this.status = status;
     this.timeStamp = timeStamp;
     this.nomeGrupo = nomeGrupo;
+    this.visualizacaoUnica = visualizacaoUnica;
+    this.remocao = remocao;
   }
 
+  public Mensagem(String nomeUsuarioASerRemovido, Boolean remocao) {
+      this.nomeUsuarioASerRemovido = nomeUsuarioASerRemovido;
+      this.remocao = remocao;
+  }
+
+  public String getNomeUsuarioASerRemovido() {
+    return nomeUsuarioASerRemovido;
+  }
+
+  public Boolean isRemove() {
+    return remocao;
+  }
+  
   public void setStatus(String status) {
     this.status = status;
   }
 
   public String getStatus() {
     return status;
+  }
+
+  public Boolean getVisualizacaoUnica() {
+    return visualizacaoUnica;
   }
 
   public Image getStatusImage() {
@@ -52,9 +74,9 @@ public class Mensagem {
     if (status.equals("checkVisto")) {
       return checkVisto;
     }
-    if (status.equals("unique")) {
-      return iconeVisualizacaoUnica;
-    }
+    // if (status.equals("unique")) {
+    //   return iconeVisualizacaoUnica;
+    // }
     return check;
   }
 

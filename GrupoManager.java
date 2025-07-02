@@ -5,10 +5,12 @@ public class GrupoManager {
   // Estrutura para armazenar grupos e seus membros
   private final Map<String, Set<Usuario>> grupos;
   private Peer app;
+  private Principal appPrincipal;
 
-  public GrupoManager(Peer app) {
+  public GrupoManager(Peer app, Principal appPrincipal) {
     this.grupos = new HashMap<>();
     this.app = app;
+    this.appPrincipal = appPrincipal;
   }
 
   /*
@@ -64,6 +66,7 @@ public class GrupoManager {
   public synchronized void removerUsuario(String nomeGrupo, Usuario usuario) {
     if (grupos.containsKey(nomeGrupo)) {
       grupos.get(nomeGrupo).remove(usuario);
+      appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).mostrarMensagemDeRemovido(usuario.getNome());
       // Remove o grupo se ele estiver vazio
       if (grupos.get(nomeGrupo).isEmpty()) {
         grupos.remove(nomeGrupo);

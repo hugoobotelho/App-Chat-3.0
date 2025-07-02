@@ -62,15 +62,19 @@ public class GruposPeer {
       // String resposta = (String) entrada.readObject(); // Lê a resposta
       // System.out.println("Resposta do servidor: " + resposta);
     } catch (IOException e) {
-      System.err.println("Erro ao conectar ou enviar mensagem: " + e.getMessage());
-      try {
-        Thread.sleep(1000); // espera 1 segundo para escolher o novo servidor
-      } catch (InterruptedException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+      System.out.println("O peer que teria que receber o LEAVE nao esta rodando.");
+      if (!tipoMensagem.equals("LEAVE")) {
+        System.err.println("Erro ao conectar ou enviar mensagem: " + e.getMessage());
+        try {
+          Thread.sleep(1000); // espera 1 segundo para escolher o novo servidor
+        } catch (InterruptedException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+        conectarESalvarAPDU(tipoMensagem, nomeUsuario, nomeGrupo); // tenta novamente
+        // escolherNovoServidor(tipoMensagem, nomeUsuario, nomeGrupo); // Se falhar,
+        // tenta outro
       }
-      conectarESalvarAPDU(tipoMensagem, nomeUsuario, nomeGrupo); //tenta novamente
-      // escolherNovoServidor(tipoMensagem, nomeUsuario, nomeGrupo); // Se falhar, tenta outro
     }
 
   }
