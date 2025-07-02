@@ -334,9 +334,10 @@ public class Principal extends Application {
     return peersConhecidos;
   }
 
-  public Set<GruposPeer> getGrupoPeer () {
+  public Set<GruposPeer> getGrupoPeer() {
     return peersTCP;
   }
+
   /*
    * ***************************************************************
    * Metodo: setServidoresConhecidos
@@ -346,9 +347,18 @@ public class Principal extends Application {
    * Retorno: void
    */
   public void setPeersConhecidos(String novoPeer) {
-    if (!peersConhecidos.contains(novoPeer)){
+    if (!peersConhecidos.contains(novoPeer)) {
       GruposPeer peer = new GruposPeer(novoPeer, 6789, this);
       peersTCP.add(peer);
+      System.out.println("Meus grupos: " + grupos);
+      for (String nomeGrupo : grupos) { // envia join de todos os grupos que esta para todos os peers (rewolve o
+                                        // problema de atualizar um peer caso ele caia, mas aumenta significativamente o
+                                        // numero de mensagens trocadas), tentar melhor depois
+        System.out
+            .println("Enviando JOIN para grupo: " + nomeGrupo + " no peer: " + novoPeer + " usuario: " + nomeUsuario);
+        // GruposPeer gruposPeer = new GruposPeer(novoPeer, 6789, app);
+        peer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
+      }
     }
     peersConhecidos.add(novoPeer);
     // if (!peersConhecidos.contains(novoPeer)) {
@@ -361,15 +371,7 @@ public class Principal extends Application {
     // System.out.println("Peer adicionado: " + novoPeer);
 
     // }
-    System.out.println("Meus grupos: " + grupos);
-    for (String nomeGrupo : grupos) { // envia join de todos os grupos que esta para todos os peers (rewolve o
-                                      // problema de atualizar um peer caso ele caia, mas aumenta significativamente o
-                                      // numero de mensagens trocadas), tentar melhor depois
-      System.out
-          .println("Enviando JOIN para grupo: " + nomeGrupo + " no peer: " + novoPeer + " usuario: " + nomeUsuario);
-      GruposPeer gruposPeer = new GruposPeer(novoPeer, 6789, app);
-      gruposPeer.enviarAPDUJoin(nomeUsuario, nomeGrupo);
-    }
+
   }
 
   public Peer getPeer() {

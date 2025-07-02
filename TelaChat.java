@@ -63,12 +63,8 @@ public class TelaChat {
       iconeFlag = true;
       iconeVisualizacaoUnica.setImage(new Image("/img/visualizacaoUnicaCinza.png"));
       botaoVisualizacaoUnica.setGraphic(iconeVisualizacaoUnica);
-      historicoMensagens.getMensagens().removeIf(m -> {
-        if (!m.isRemove())
-          return false;
-        return m.getVisualizacaoUnica();
-      });
-
+      historicoMensagens.getMensagens().removeIf(m -> m.getVisualizacaoUnica()); // remove as mensagens de
+                                                                                 // visualizacao unica
       renderizarMensagens();
 
       TelaMeusGrupos telaMeusGrupos = new TelaMeusGrupos(app);

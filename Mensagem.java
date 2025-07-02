@@ -42,6 +42,7 @@ public class Mensagem {
   public Mensagem(String nomeUsuarioASerRemovido, Boolean remocao) {
       this.nomeUsuarioASerRemovido = nomeUsuarioASerRemovido;
       this.remocao = remocao;
+      this.visualizacaoUnica = false;
   }
 
   public String getNomeUsuarioASerRemovido() {
@@ -51,7 +52,7 @@ public class Mensagem {
   public Boolean isRemove() {
     return remocao;
   }
-  
+
   public void setStatus(String status) {
     this.status = status;
   }
