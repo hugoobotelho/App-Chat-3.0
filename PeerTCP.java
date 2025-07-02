@@ -65,7 +65,7 @@ public class PeerTCP {
           String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do cliente
           System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
-          // String resposta = processarMensagem(mensagemRecebida, conexao);
+          String resposta = processarMensagem(mensagemRecebida, conexao);
 
           // saida = new ObjectOutputStream(conexao.getOutputStream());
           // saida.writeObject(resposta); // Envia a resposta
