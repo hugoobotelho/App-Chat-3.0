@@ -195,6 +195,7 @@ public class TelaChat {
       while (threadRodando) {
         if (isOpen) {
           long totalNaoUnicas = historicoMensagens.getMensagens().stream()
+              .filter(m -> !m.isRemove())
               .filter(m -> !m.getVisualizacaoUnica())
               .count();
 
@@ -329,7 +330,7 @@ public class TelaChat {
       return componenteMensagem;
     } else {
       VBox componenteMensagem = new VBox(5);
-      Label mensagemRemocao = new Label("Usuario: " + mensagem.getNomeUsuarioASerRemovido() + " saiu do grupo");
+      Label mensagemRemocao = new Label(mensagem.getNomeUsuarioASerRemovido() + " saiu do grupo");
       mensagemRemocao.setStyle("-fx-text-fill: #B4B4B4; -fx-font-size: 16px; -fx-font-style: italic;");
       mensagemRemocao.setAlignment(Pos.CENTER);
       componenteMensagem.getChildren().addAll(mensagemRemocao);

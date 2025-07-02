@@ -63,7 +63,7 @@ public class GruposPeer {
       // System.out.println("Resposta do servidor: " + resposta);
     } catch (IOException e) {
       System.out.println("O peer que teria que receber o LEAVE nao esta rodando.");
-      if (!tipoMensagem.equals("LEAVE")) {
+      // if (!tipoMensagem.equals("LEAVE")) {
         System.err.println("Erro ao conectar ou enviar mensagem: " + e.getMessage());
         try {
           Thread.sleep(1000); // espera 1 segundo para escolher o novo servidor
@@ -74,7 +74,7 @@ public class GruposPeer {
         conectarESalvarAPDU(tipoMensagem, nomeUsuario, nomeGrupo); // tenta novamente
         // escolherNovoServidor(tipoMensagem, nomeUsuario, nomeGrupo); // Se falhar,
         // tenta outro
-      }
+      // }
     }
 
   }
