@@ -79,11 +79,13 @@ public class PeerTCP {
         if (app.getPeersConhecidos().contains(conexao.getInetAddress().getHostAddress())) {
           System.out.println("Vai verificar qual eh o nome do usuario");
           for (String nomeUsuario : app.getPeer().getUsuarios().keySet()) {
-            System.out.println(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
-            if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress()
-                .equals(conexao.getInetAddress().getHostAddress())) {
-              System.out.println("Vai chamar a funcao remover usuario de todos os grupos: " + nomeUsuario);
-              grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
+            // System.out.println(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
+            if (app.getPeer().getUsuarios().containsKey(nomeUsuario)) {
+              if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress()
+                  .equals(conexao.getInetAddress().getHostAddress())) {
+                System.out.println("Vai chamar a funcao remover usuario de todos os grupos: " + nomeUsuario);
+                grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
+              }
             }
           }
         }

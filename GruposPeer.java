@@ -24,7 +24,8 @@ public class GruposPeer {
     try {
       socket = new Socket(host, porta);
       saida = new ObjectOutputStream(socket.getOutputStream());
-      entrada = new ObjectInputStream(socket.getInputStream());
+      // entrada = new ObjectInputStream(socket.getInputStream());
+
     } catch (UnknownHostException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -58,9 +59,9 @@ public class GruposPeer {
 
       // Aguarda a resposta do servidor
       // ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
-      String resposta = (String) entrada.readObject(); // Lê a resposta
-      System.out.println("Resposta do servidor: " + resposta);
-    } catch (IOException | ClassNotFoundException e) {
+      // String resposta = (String) entrada.readObject(); // Lê a resposta
+      // System.out.println("Resposta do servidor: " + resposta);
+    } catch (IOException e) {
       System.err.println("Erro ao conectar ou enviar mensagem: " + e.getMessage());
       try {
         Thread.sleep(1000); // espera 1 segundo para escolher o novo servidor
