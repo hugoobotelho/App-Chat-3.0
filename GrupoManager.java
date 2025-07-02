@@ -26,6 +26,9 @@ public class GrupoManager {
    */
   public synchronized void adicionarUsuario(String nomeGrupo, Usuario usuario, Boolean isUpdate) {
     grupos.computeIfAbsent(nomeGrupo, k -> new HashSet<>()).add(usuario);
+    if (appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo) != null) {
+      appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
+    }
     // if (!isUpdate) {
     // Set<AtualizarPeers> peers = app.getPeersTCP();
     // if (peers != null) {

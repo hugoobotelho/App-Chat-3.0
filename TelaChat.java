@@ -26,10 +26,13 @@ public class TelaChat {
   public boolean isOpen = false;
   private boolean iconeFlag = true;
   private ScrollPane scrollMensagens;
+  private Label nomeIntegrantes;
+  private String nomeGurpo;
 
   public TelaChat(Principal app, String nomeGrupo, HistoricoMensagens historicoMensagens) {
     this.app = app;
     this.historicoMensagens = historicoMensagens;
+    this.nomeGurpo = nomeGrupo;
 
     layout.setStyle("-fx-alignment: top-center;");
 
@@ -77,7 +80,18 @@ public class TelaChat {
     nomeGrupoTexto.setMaxWidth(400);
     nomeGrupoTexto.setWrapText(true);
 
-    HBox.setHgrow(nomeGrupoTexto, Priority.ALWAYS);
+    nomeIntegrantes = new Label();
+    nomeIntegrantes.setStyle("-fx-text-fill: #B4B4B4; -fx-font-size: 16px;");
+    nomeIntegrantes.setWrapText(true);
+    nomeIntegrantes.setMaxWidth(400);
+
+    VBox dadosGrupo = new VBox(5);
+    dadosGrupo.getChildren().addAll(nomeGrupoTexto, nomeIntegrantes);
+    dadosGrupo.setAlignment(Pos.CENTER_LEFT);
+
+    dadosGrupo.setMaxWidth(400);
+
+    HBox.setHgrow(dadosGrupo, Priority.ALWAYS);
 
     // icone de Sair do Grupo
     ImageView sairIcon = new ImageView(new Image("/img/sairIcon.png"));
@@ -93,7 +107,7 @@ public class TelaChat {
       app.getRoot().getChildren().setAll(telaMeusGrupos.getLayout());
     });
 
-    header.getChildren().addAll(botaoVoltar, nomeGrupoTexto, botaoSair);
+    header.getChildren().addAll(botaoVoltar, dadosGrupo, botaoSair);
 
     // Lista de Mensagens
     listaMensagens = new VBox(10);
@@ -226,6 +240,15 @@ public class TelaChat {
   public void renderizarMensagens() {
 
     Platform.runLater(() -> {
+      StringBuilder dadosMembros = new StringBuilder();
+      for (Usuario membro : app.getPeer().getGrupoManager().obterMembros(nomeGurpo)) {
+        if (dadosMembros.length() > 0) {
+          dadosMembros.append(", ");
+        }
+        dadosMembros.append(membro.getNome());
+      }
+      nomeIntegrantes.setText(dadosMembros.toString());
+
       listaMensagens.getChildren().clear();
       for (Mensagem mensagem : historicoMensagens.getMensagens()) {
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
