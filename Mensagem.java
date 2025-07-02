@@ -1,6 +1,7 @@
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +28,8 @@ public class Mensagem {
   private String nomeUsuarioASerRemovido;
   private Boolean remocao;
 
-  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp, String nomeGrupo, Boolean visualizacaoUnica, Boolean remocao) {
+  public Mensagem(Principal app, String remetente, String conteudo, String hora, String status, String timeStamp,
+      String nomeGrupo, Boolean visualizacaoUnica, Boolean remocao) {
     this.app = app;
     this.remetente = remetente;
     this.conteudo = conteudo;
@@ -40,9 +42,9 @@ public class Mensagem {
   }
 
   public Mensagem(String nomeUsuarioASerRemovido, Boolean remocao) {
-      this.nomeUsuarioASerRemovido = nomeUsuarioASerRemovido;
-      this.remocao = remocao;
-      this.visualizacaoUnica = false;
+    this.nomeUsuarioASerRemovido = nomeUsuarioASerRemovido;
+    this.remocao = remocao;
+    this.visualizacaoUnica = false;
   }
 
   public String getNomeUsuarioASerRemovido() {
@@ -76,7 +78,7 @@ public class Mensagem {
       return checkVisto;
     }
     // if (status.equals("unique")) {
-    //   return iconeVisualizacaoUnica;
+    // return iconeVisualizacaoUnica;
     // }
     return check;
   }
@@ -115,10 +117,15 @@ public class Mensagem {
         break;
       }
     }
-    if (flag && !status.equals("checkVisto") && (app.getPeer().getGrupoManager().obterMembros(nomeGrupo).size() > 1)) {
+
+    boolean temOutroMembro = app.getPeer().getGrupoManager().obterMembros(nomeGrupo).stream()
+        .anyMatch(m -> !m.getNome().equals(app.getNomeUsuario()));
+
+    if (flag && !status.equals("checkVisto") && temOutroMembro) {
       setStatus("checkDuplo");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
+
   }
 
   public void incrementaVistos(String remetente, String nomeGrupo) {
