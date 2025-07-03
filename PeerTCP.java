@@ -72,7 +72,8 @@ public class PeerTCP {
           // saida.flush(); // Garante que a resposta será enviada ao Peer
         }
       } catch (Exception e) {
-        System.err.println("Erro de I/O ao processar Peer: " + e.getMessage());
+        System.err.println("Erro de I/O ao processar Peer:");
+        e.printStackTrace();
 
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
         System.out.println("Os peers conhecidos sao: " + app.getPeersConhecidos());
@@ -97,7 +98,7 @@ public class PeerTCP {
           if (entrada != null)
             entrada.close();
           // if (saida != null)
-          //   saida.close();
+          // saida.close();
           conexao.close(); // Fechar conexão ao final
         } catch (IOException ex) {
           System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
@@ -115,66 +116,72 @@ public class PeerTCP {
      * Retorno: String - resposta de sucesso ou erro da operação
      */
     private String processarMensagem(String mensagem, Socket conexao) {
-      String[] partes = mensagem.split("\\|");
-      if (partes.length < 3) {
-        return "Erro: Mensagem mal formatada. Esperado TIPO|USUARIO|GRUPO.";
-      }
-
-      String tipo = partes[0].trim();
-      String nomeUsuario = partes[1].trim();
-      String nomeGrupo = partes[2].trim();
-
-      Usuario usuario;
-      synchronized (usuarios) {
-        usuario = usuarios.computeIfAbsent(nomeUsuario,
-            k -> new Usuario(nomeUsuario, conexao.getInetAddress(), conexao.getPort()));
-      }
-
-      synchronized (grupoManager) {
-        // String newMessage;
-        String mensagemComTimestamp;
-        switch (tipo.toUpperCase()) {
-          case "JOIN":
-            // mensagemComTimestamp = mensagem + "|" + System.currentTimeMillis();
-            // peer.setMessageLog(mensagemComTimestamp);
-
-            // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
-            grupoManager.adicionarUsuario(nomeGrupo, usuario);
-            return "Usuário " + nomeUsuario + " adicionado ao grupo " + nomeGrupo;
-
-          case "LEAVE":
-            // mensagemComTimestamp = mensagem + "|" + System.currentTimeMillis();
-            // peer.setMessageLog(mensagemComTimestamp);
-
-            // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
-            if (grupoManager.grupoExiste(nomeGrupo)) {
-              grupoManager.removerUsuario(nomeGrupo, usuario);
-              return "Usuário " + nomeUsuario + " removido do grupo " + nomeGrupo;
-            } else {
-              return "Erro: Grupo " + nomeGrupo + " não existe.";
-            }
-            // case "ATUALIZAR_JOIN":
-            // // newMessage = "JOIN|" + nomeUsuario + "|" + nomeGrupo;
-            // peer.setMessageLog(mensagem);
-            // grupoManager.adicionarUsuario(nomeGrupo, usuario, true);
-            // return "Fui atualizado com Usuário " + nomeUsuario + " adicionado ao grupo "
-            // + nomeGrupo;
-
-            // case "ATUALIZAR_LEAVE":
-            // // newMessage = "LEAVE|" + nomeUsuario + "|" + nomeGrupo;
-            // peer.setMessageLog(mensagem);
-            // if (grupoManager.grupoExiste(nomeGrupo)) {
-            // grupoManager.removerUsuario(nomeGrupo, usuario, true);
-            // return "Fui atualizado com Usuário " + nomeUsuario + " removido do grupo " +
-            // nomeGrupo;
-            // } else {
-            // return "Erro: Grupo " + nomeGrupo + " não existe.";
-            // }
-
-          default:
-            return "Erro: Tipo de mensagem desconhecido. Use JOIN ou LEAVE.";
+      try {
+        String[] partes = mensagem.split("\\|");
+        if (partes.length < 3) {
+          return "Erro: Mensagem mal formatada. Esperado TIPO|USUARIO|GRUPO.";
         }
+
+        String tipo = partes[0].trim();
+        String nomeUsuario = partes[1].trim();
+        String nomeGrupo = partes[2].trim();
+
+        Usuario usuario;
+        synchronized (usuarios) {
+          usuario = usuarios.computeIfAbsent(nomeUsuario,
+              k -> new Usuario(nomeUsuario, conexao.getInetAddress(), conexao.getPort()));
+        }
+
+        synchronized (grupoManager) {
+          // String newMessage;
+          String mensagemComTimestamp;
+          switch (tipo.toUpperCase()) {
+            case "JOIN":
+              // mensagemComTimestamp = mensagem + "|" + System.currentTimeMillis();
+              // peer.setMessageLog(mensagemComTimestamp);
+
+              // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
+              grupoManager.adicionarUsuario(nomeGrupo, usuario);
+              return "Usuário " + nomeUsuario + " adicionado ao grupo " + nomeGrupo;
+
+            case "LEAVE":
+              // mensagemComTimestamp = mensagem + "|" + System.currentTimeMillis();
+              // peer.setMessageLog(mensagemComTimestamp);
+
+              // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
+              if (grupoManager.grupoExiste(nomeGrupo)) {
+                grupoManager.removerUsuario(nomeGrupo, usuario);
+                return "Usuário " + nomeUsuario + " removido do grupo " + nomeGrupo;
+              } else {
+                return "Erro: Grupo " + nomeGrupo + " não existe.";
+              }
+              // case "ATUALIZAR_JOIN":
+              // // newMessage = "JOIN|" + nomeUsuario + "|" + nomeGrupo;
+              // peer.setMessageLog(mensagem);
+              // grupoManager.adicionarUsuario(nomeGrupo, usuario, true);
+              // return "Fui atualizado com Usuário " + nomeUsuario + " adicionado ao grupo "
+              // + nomeGrupo;
+
+              // case "ATUALIZAR_LEAVE":
+              // // newMessage = "LEAVE|" + nomeUsuario + "|" + nomeGrupo;
+              // peer.setMessageLog(mensagem);
+              // if (grupoManager.grupoExiste(nomeGrupo)) {
+              // grupoManager.removerUsuario(nomeGrupo, usuario, true);
+              // return "Fui atualizado com Usuário " + nomeUsuario + " removido do grupo " +
+              // nomeGrupo;
+              // } else {
+              // return "Erro: Grupo " + nomeGrupo + " não existe.";
+              // }
+
+            default:
+              return "Erro: Tipo de mensagem desconhecido. Use JOIN ou LEAVE.";
+          }
+        }
+      } catch (Exception e) {
+        System.err.println("Erro ao processar mensagem: " + e.getMessage());
+        return "Erro interno ao processar mensagem.";
       }
+
     }
   }
 }

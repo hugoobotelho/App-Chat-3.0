@@ -8,6 +8,7 @@
 * Funcao: Aplicativo de chat para troca de mensagens no modelo Peer to Peer
 *************************************************************** */
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -221,11 +222,19 @@ public class Principal extends Application {
 
   public void removePeerConhecido(String ipPeer) {
     peersConhecidos.remove(ipPeer);
-    peersTCP.removeIf(p -> p.getHost().equals(ipPeer));
+
+    List<GruposPeer> copia = new ArrayList<>(peersTCP);
+    for (GruposPeer peer : copia) {
+      if (peer.getHost().equals(ipPeer)) {
+        peersTCP.remove(peer);
+      }
+    }
+
+    // peersTCP.removeIf(p -> p.getHost().equals(ipPeer));
     // for (GruposPeer peer : peersTCP) {
-    //   if (peer.getHost().equals(ipPeer)) {
-    //     peersTCP.remove(peer);
-    //   }
+    // if (peer.getHost().equals(ipPeer)) {
+    // peersTCP.remove(peer);
+    // }
     // }
   }
 
