@@ -83,7 +83,7 @@ public class Mensagem {
     return check;
   }
 
-  public void incrementaRecebimento(String remetente, String nomeGrupo) {
+  public void incrementaRecebimento(String nomeRecebido, String nomeGrupo) {
     System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
     // if (app.getGrupos().contains(nomeGrupo) &&
     // remetente.equals(app.getNomeUsuario())) {
@@ -94,10 +94,10 @@ public class Mensagem {
       if (entry.getKey().equals(nomeGrupo)) {
         for (Usuario usuario : entry.getValue()) {
           // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
-          if (usuario.getNome().equals(remetente)) {
-            System.out.println("MENSAGEM RECEBIDA POR " + remetente);
+          if (usuario.getNome().equals(nomeRecebido)) {
+            System.out.println("MENSAGEM RECEBIDA POR " + nomeRecebido);
             // qtdRecebimentos++;
-            membrosRecebidos.add(remetente);
+            membrosRecebidos.add(nomeRecebido);
           }
         }
       }
@@ -128,7 +128,7 @@ public class Mensagem {
 
   }
 
-  public void incrementaVistos(String remetente, String nomeGrupo) {
+  public void incrementaVistos(String nomeRecebido, String nomeGrupo) {
     System.out.println("Vai incrementar recebimento, nome Grupo: " + nomeGrupo + " nome Remetente: " + remetente);
     // if (app.getGrupos().contains(nomeGrupo) &&
     // remetente.equals(app.getNomeUsuario())) {
@@ -139,10 +139,10 @@ public class Mensagem {
       if (entry.getKey().equals(nomeGrupo)) {
         for (Usuario usuario : entry.getValue()) {
           // System.out.println(" - " + usuario.getNome()); // ou .toString() se preferir
-          if (usuario.getNome().equals(remetente)) {
-            System.out.println("MENSAGEM RECEBIDA POR " + remetente);
+          if (usuario.getNome().equals(nomeRecebido)) {
+            System.out.println("MENSAGEM RECEBIDA POR " + nomeRecebido);
             // qtdVistos++;
-            membrosVistos.add(remetente);
+            membrosVistos.add(nomeRecebido);
           }
         }
       }
@@ -159,7 +159,11 @@ public class Mensagem {
         break;
       }
     }
-    if (flag) {
+
+    boolean temOutroMembro = app.getPeer().getGrupoManager().obterMembros(nomeGrupo).stream()
+        .anyMatch(m -> !m.getNome().equals(app.getNomeUsuario()));
+
+    if (flag && temOutroMembro) {
       setStatus("checkVisto");
       app.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }

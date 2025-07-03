@@ -66,11 +66,13 @@ public class PeerUDP {
             if (app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo) != null) {
               System.out.println("Existe!!!");
               for (Mensagem m : app.getTelaMeusGrupos().getHistoricoMensagensGrupo(grupo).getMensagens()) {
-                if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
-                  if (apdu.equals("RECEBIDO")) {
-                    m.incrementaRecebimento(remetente, grupo);
-                  } else if (apdu.equals("VISTO")) {
-                    m.incrementaVistos(remetente, grupo);
+                if (m.getTimeStampMensagem() != null) {
+                  if (m.getTimeStampMensagem().equals(timestamp) && m.getNomeGrupoMensagem().equals(grupo)) {
+                    if (apdu.equals("RECEBIDO")) {
+                      m.incrementaRecebimento(remetente, grupo);
+                    } else if (apdu.equals("VISTO")) {
+                      m.incrementaVistos(remetente, grupo);
+                    }
                   }
                 }
               }
