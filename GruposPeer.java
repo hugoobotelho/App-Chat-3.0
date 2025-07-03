@@ -88,8 +88,9 @@ public class GruposPeer {
    * Retorno: void
    */
   public void enviarAPDUJoin(String nomeUsuario, String nomeGrupo) {
-    Thread threadJoin = new Thread(() -> conectarESalvarAPDU("JOIN", nomeUsuario, nomeGrupo));
-    threadJoin.start(); // Inicia a thread de envio JOIN
+    // Thread threadJoin = new Thread(() -> conectarESalvarAPDU("JOIN", nomeUsuario, nomeGrupo));
+    conectarESalvarAPDU("JOIN", nomeUsuario, nomeGrupo);
+    // threadJoin.start(); // Inicia a thread de envio JOIN
   }
 
   /*
