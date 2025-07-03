@@ -26,8 +26,7 @@ public class DescobrirPeers {
    * ***************************************************************
    * Metodo: iniciarSincronizacao.
    * Funcao: cria duas threads, uma para enviar mensagens para descobrir os
-   * servidores disponiveis e outra para receber essas mensagens e responder os
-   * outros servidores
+   * peer disponiveis e outra para receber essas mensagens e responder
    * Parametros: sem paramentros.
    * Retorno: sem retorno.
    * ***************************************************************
@@ -41,8 +40,8 @@ public class DescobrirPeers {
   /*
    * ***************************************************************
    * Metodo: enviarSinc.
-   * Funcao: envia uma APDU SINC para os servidores via broadcast e espera uma
-   * resposta que contem o horario da maquina do servidor que respondeu
+   * Funcao: envia uma APDU SINC para os Peers via broadcast e espera uma
+   * resposta que contem o horario da maquina do Peer que respondeu
    * Parametros: sem paramentros.
    * Retorno: sem retorno.
    * ***************************************************************
@@ -74,7 +73,7 @@ public class DescobrirPeers {
                                                                                             // que se respondeu
               String msg = new String(resposta.getData(), 0, resposta.getLength());
               if (msg.equals("IMALIVE")) {
-                app.setPeersConhecidos(resposta.getAddress().getHostAddress()); // adiciona o ip do servidor descoberto
+                app.setPeersConhecidos(resposta.getAddress().getHostAddress()); // adiciona o ip do Peer descoberto
                 System.out.println("Resposta recebida de " + resposta.getAddress());
               }
             }
@@ -95,9 +94,9 @@ public class DescobrirPeers {
   /*
    * ***************************************************************
    * Metodo: receberSinc.
-   * Funcao: fica apto a receber mensagens de outros servidores ou dos clientes,
+   * Funcao: fica apto a receber mensagens de outros Peers,
    * caso a APDU que chegar for SINC, entao ele responde com o seu horario, se for
-   * AREYOUALIVE, ele responde ao cliente que esta disponivel
+   * AREYOUALIVE, ele responde ao Peers que esta disponivel
    * Parametros: sem paramentros.
    * Retorno: sem retorno.
    * ***************************************************************

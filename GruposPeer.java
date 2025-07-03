@@ -42,7 +42,7 @@ public class GruposPeer {
   /*
    * ***************************************************************
    * Metodo: conectarESalvarAPDU
-   * Funcao: Conecta ao servidor TCP, envia uma APDU com dados formatados e
+   * Funcao: Conecta ao Peer TCP, envia uma APDU com dados formatados e
    * aguarda resposta.
    * Parametros: String tipoMensagem - tipo da requisição (JOIN ou LEAVE)
    * String nomeUsuario - nome do usuário
@@ -51,8 +51,7 @@ public class GruposPeer {
    */
   private void conectarESalvarAPDU(String tipoMensagem, String nomeUsuario, String nomeGrupo) {
     try {
-      System.out.println("Conectado ao servidor " + host + ":" + porta);
-      // app.setIpServidor(host); // atualiza o servidor ativo
+      System.out.println("Conectado ao Peer " + host + ":" + porta);
 
       // Envia a mensagem
       // ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
@@ -61,16 +60,13 @@ public class GruposPeer {
       saida.flush();
       System.out.println("Mensagem enviada: " + mensagem);
 
-      // Aguarda a resposta do servidor
-      // ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
-      // String resposta = (String) entrada.readObject(); // Lê a resposta
-      // System.out.println("Resposta do servidor: " + resposta);
+
     } catch (IOException e) {
       System.out.println("O peer que teria que receber o LEAVE nao esta rodando.");
       if (!tipoMensagem.equals("LEAVE")) { 
         System.err.println("Erro ao conectar ou enviar mensagem: " + e.getMessage());
         try {
-          Thread.sleep(1000); // espera 1 segundo para escolher o novo servidor
+          Thread.sleep(1000); // espera 1 segundo para tentar novamente
         } catch (InterruptedException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -86,7 +82,7 @@ public class GruposPeer {
   /*
    * ***************************************************************
    * Metodo: enviarAPDUJoin
-   * Funcao: Inicia uma thread para envio da APDU JOIN ao servidor.
+   * Funcao: Inicia uma thread para envio da APDU JOIN ao Peer.
    * Parametros: String nomeUsuario - nome do usuário
    * String nomeGrupo - nome do grupo a ser ingressado
    * Retorno: void
@@ -99,7 +95,7 @@ public class GruposPeer {
   /*
    * ***************************************************************
    * Metodo: enviarAPDULeave
-   * Funcao: Inicia uma thread para envio da APDU LEAVE ao servidor.
+   * Funcao: Inicia uma thread para envio da APDU LEAVE ao Peer.
    * Parametros: String nomeUsuario - nome do usuário
    * String nomeGrupo - nome do grupo a ser deixado
    * Retorno: void

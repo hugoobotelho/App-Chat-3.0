@@ -107,7 +107,7 @@ public class TelaMeusGrupos {
           containerAdicionarGrupo.setVisible(false); // Esconde o container novamente
           inputNomeGrupo.clear(); // Limpa o campo de texto
 
-          // Enviar a APDU de tipo "JOIN" para o servidor TCP
+          // Enviar a APDU de tipo "JOIN" para o Peer TCP
           enviarAPDUJoin(nomeGrupo);
 
           // Remove a mensagem de erro caso exista
@@ -251,7 +251,7 @@ public class TelaMeusGrupos {
   /*
    * ***************************************************************
    * Metodo: enviarAPDUJoin
-   * Funcao: Envia uma APDU de tipo "JOIN" para o servidor TCP, permitindo que o
+   * Funcao: Envia uma APDU de tipo "JOIN" para o Peer TCP, permitindo que o
    * usuário se junte a um grupo.
    * Parametros: String nomeGrupo - o nome do grupo a ser adicionado
    * Retorno: void
@@ -270,7 +270,7 @@ public class TelaMeusGrupos {
       }
     } catch (Exception e) {
       // Exibir mensagem de erro se falhar ao enviar a APDU
-      Label mensagemErro = new Label("Erro ao conectar ao servidor. Tente novamente.");
+      Label mensagemErro = new Label("Erro ao conectar ao peer. Tente novamente.");
       mensagemErro.setStyle("-fx-text-fill: red; -fx-font-size: 14px;");
       containerAdicionarGrupo.getChildren().add(mensagemErro);
     }

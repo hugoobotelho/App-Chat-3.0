@@ -7,27 +7,27 @@ public class PeerUDP {
   private final GrupoManager grupoManager;
   private final Map<String, Usuario> usuarios;
   Principal app;
-  private final DatagramSocket clienteSocket1; // escuta
+  private final DatagramSocket peerSocket1; // escuta
 
   public PeerUDP(GrupoManager grupoManager, Map<String, Usuario> usuarios, Principal app) throws SocketException {
     this.grupoManager = grupoManager;
     this.usuarios = usuarios;
     this.app = app;
-    this.clienteSocket1 = new DatagramSocket(2345); // Para receber "RECEBIDO"
+    this.peerSocket1 = new DatagramSocket(2345); // Para receber "RECEBIDO"
 
   }
 
   /*
    * ***************************************************************
    * Metodo: iniciar
-   * Funcao: Inicia o servidor UDP na porta 6789 e aguarda mensagens dos clientes.
+   * Funcao: Inicia o peer UDP na porta 6789 e aguarda mensagens dos peers.
    * A cada mensagem recebida, cria uma nova thread para processá-la.
    * Parametros: nenhum
    * Retorno: void
    */
   public void iniciar() {
     try {
-      DatagramSocket servidorSocket = new DatagramSocket(1234); // Porta do servidor
+      DatagramSocket peerSocketS = new DatagramSocket(1234); // Porta do peer
       System.out.println("Servidor UDP iniciado na porta 6789...");
       new Thread(() -> {
         while (true) {
@@ -35,16 +35,16 @@ public class PeerUDP {
           byte[] dadosRecebidos = new byte[1024];
           DatagramPacket pacoteRecebido = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
 
-          // Aguarda uma mensagem de um cliente
+          // Aguarda uma mensagem de um peer
           try {
-            servidorSocket.receive(pacoteRecebido);
+            peerSocketS.receive(pacoteRecebido);
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
 
           // Inicia uma nova thread para processar a mensagem recebida
-          new Thread(new ProcessaMensagem(pacoteRecebido, servidorSocket)).start();
+          new Thread(new ProcessaMensagem(pacoteRecebido, peerSocketS)).start();
         }
       }).start();
       new Thread(() -> {
@@ -87,7 +87,7 @@ public class PeerUDP {
       }).start();
 
     } catch (Exception e) {
-      System.err.println("Erro no servidor UDP: " + e.getMessage());
+      System.err.println("Erro no peer UDP: " + e.getMessage());
     }
   }
 
@@ -95,7 +95,7 @@ public class PeerUDP {
     try {
       byte[] dadosRecebidos = new byte[1024];
       DatagramPacket pacoteRecebido = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
-      clienteSocket1.receive(pacoteRecebido); // Bloqueia até receber um pacote
+      peerSocket1.receive(pacoteRecebido); // Bloqueia até receber um pacote
       return new String(pacoteRecebido.getData(), 0, pacoteRecebido.getLength());
     } catch (Exception e) {
       e.printStackTrace();
@@ -105,11 +105,11 @@ public class PeerUDP {
 
   private class ProcessaMensagem extends Thread {
     private final DatagramPacket pacoteRecebido;
-    private final DatagramSocket servidorSocket;
+    private final DatagramSocket peerSocketS;
 
-    public ProcessaMensagem(DatagramPacket pacoteRecebido, DatagramSocket servidorSocket) {
+    public ProcessaMensagem(DatagramPacket pacoteRecebido, DatagramSocket peerSocketS) {
       this.pacoteRecebido = pacoteRecebido;
-      this.servidorSocket = servidorSocket;
+      this.peerSocketS = peerSocketS;
     }
 
     /*
@@ -163,7 +163,7 @@ public class PeerUDP {
               dadosResposta.length,
               pacoteRecebido.getAddress(),
               2345);
-          servidorSocket.send(pacoteResposta);
+          peerSocketS.send(pacoteResposta);
 
           app.processarMensagemRecebida(mensagemRecebida);
         } 

@@ -378,7 +378,7 @@ public class TelaChat {
   /*
    * ***************************************************************
    * Metodo: enviarAPDULeave
-   * Funcao: Envia uma APDU de "LEAVE" para o servidor para que o usuário saia do
+   * Funcao: Envia uma APDU de "LEAVE" para o Peer para que o usuário saia do
    * grupo.
    * Parametros: String nomeGrupo - nome do grupo a ser deixado
    * Retorno: void

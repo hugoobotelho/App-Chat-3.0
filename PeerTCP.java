@@ -20,7 +20,7 @@ public class PeerTCP {
   /*
    * ***************************************************************
    * Metodo: iniciar
-   * Funcao: Inicia o servidor TCP na porta 6789, aguardando conexões.
+   * Funcao: Inicia o Peer TCP na porta 6789, aguardando conexões.
    * Cada conexão é tratada por uma nova thread.
    * Parametros: nenhum
    * Retorno: void
@@ -28,15 +28,15 @@ public class PeerTCP {
   public void iniciar() {
     try {
       int portaLocal = 6789;
-      ServerSocket servidorSocket = new ServerSocket(portaLocal); // Socket do servidor
+      ServerSocket peerSocket = new ServerSocket(portaLocal); // Socket do peer
       System.out.println("Servidor TCP iniciado na porta " + portaLocal + "...");
 
       while (true) {
-        Socket conexao = servidorSocket.accept(); // Aceita conexões de clientes
+        Socket conexao = peerSocket.accept(); // Aceita conexões de Peers
         new Thread(new ProcessaCliente(conexao)).start();
       }
     } catch (Exception e) {
-      System.err.println("Erro no servidor TCP: " + e.getMessage());
+      System.err.println("Erro no peer TCP: " + e.getMessage());
     }
   }
 
@@ -51,7 +51,7 @@ public class PeerTCP {
      * ***************************************************************
      * Metodo: run
      * Funcao: Lê a mensagem recebida, processa a operação (JOIN/LEAVE),
-     * envia resposta ao cliente e fecha a conexão.
+     * envia resposta ao Peer e fecha a conexão.
      * Parametros: nenhum
      * Retorno: void
      */
@@ -62,17 +62,17 @@ public class PeerTCP {
       try {
         entrada = new ObjectInputStream(conexao.getInputStream());
         while (true) {
-          String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do cliente
+          String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do Peer
           System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
           String resposta = processarMensagem(mensagemRecebida, conexao);
 
           // saida = new ObjectOutputStream(conexao.getOutputStream());
           // saida.writeObject(resposta); // Envia a resposta
-          // saida.flush(); // Garante que a resposta será enviada ao cliente
+          // saida.flush(); // Garante que a resposta será enviada ao Peer
         }
       } catch (Exception e) {
-        System.err.println("Erro de I/O ao processar cliente: " + e.getMessage());
+        System.err.println("Erro de I/O ao processar Peer: " + e.getMessage());
 
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
         System.out.println("Os peers conhecidos sao: " + app.getPeersConhecidos());
@@ -101,20 +101,6 @@ public class PeerTCP {
           System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
         }
       }
-      // catch (ClassNotFoundException e) {
-      // System.err.println("Erro ao ler objeto do cliente: " + e.getMessage());
-      // } finally {
-
-      // // try {
-      // // if (entrada != null)
-      // // entrada.close();
-      // // if (saida != null)
-      // // saida.close();
-      // // conexao.close(); // Fechar conexão ao final
-      // // } catch (IOException e) {
-      // // System.err.println("Erro ao fechar a conexão: " + e.getMessage());
-      // // }
-      // }
     }
 
     /*
@@ -123,7 +109,7 @@ public class PeerTCP {
      * Funcao: Interpreta e executa o comando recebido (JOIN ou LEAVE).
      * Parametros:
      * String mensagem - mensagem no formato TIPO|USUARIO|GRUPO
-     * Socket conexao - conexão com o cliente, usada para obter IP e porta
+     * Socket conexao - conexão com o Peer, usada para obter IP e porta
      * Retorno: String - resposta de sucesso ou erro da operação
      */
     private String processarMensagem(String mensagem, Socket conexao) {
@@ -151,7 +137,7 @@ public class PeerTCP {
             // peer.setMessageLog(mensagemComTimestamp);
 
             // app.setMessageLog(mensagem); // adiciona a mensagem ao log de mensagens
-            grupoManager.adicionarUsuario(nomeGrupo, usuario, false);
+            grupoManager.adicionarUsuario(nomeGrupo, usuario);
             return "Usuário " + nomeUsuario + " adicionado ao grupo " + nomeGrupo;
 
           case "LEAVE":

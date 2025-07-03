@@ -1,12 +1,3 @@
-/* ***************************************************************
-* Autor............: Hugo Botelho Santana
-* Matricula........: 202210485
-* Inicio...........: 19/04/2025
-* Ultima alteracao.: 23/04/2025
-* Nome.............: Programa de Chat/WhatZap com múltiplos servidores (conexões UDP e TCP)
-* Funcao...........: Aplicativo de chat para troca de mensagens com o modelo n clientes e n servidores
-*************************************************************** */
-
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +47,7 @@ public class Peer {
       }
     });
 
-    // Inicia o servidor TCP em uma thread separada
+    // Inicia o Peer TCP em uma thread separada
     Thread peerTCPThread = new Thread(() -> {
       PeerTCP peerTCP = new PeerTCP(app, grupoManager, usuarios, peer);
       peerTCP.iniciar();
@@ -94,10 +85,10 @@ public class Peer {
   /*
    * ***************************************************************
    * Metodo: getServidoresConhecidos
-   * Funcao: Retorna o conjunto de IPs dos servidores conhecidos detectados na
+   * Funcao: Retorna o conjunto de IPs dos Peers conhecidos detectados na
    * rede.
    * Parametros: nenhum
-   * Retorno: Set<String> - conjunto de IPs de servidores conhecidos
+   * Retorno: Set<String> - conjunto de IPs de Peers conhecidos
    */
   public Set<String> getPeersConhecidos() {
     return peersConhecidos;
@@ -106,10 +97,10 @@ public class Peer {
   /*
    * ***************************************************************
    * Metodo: setServidoresConhecidos
-   * Funcao: Adiciona um novo servidor à lista de servidores conhecidos, evitando
+   * Funcao: Adiciona um novo Peer à lista de Peers conhecidos, evitando
    * duplicatas,
    * e inicializa uma thread AtualizarServidores para ele.
-   * Parametros: String novoServidor - IP do novo servidor a ser adicionado
+   * Parametros: String novoServidor - IP do novo Peer a ser adicionado
    * Retorno: void
    */
   public void setPeersConhecidos(String novoPeer) {
@@ -133,28 +124,5 @@ public class Peer {
     }
 
   }
-
-  // public void setMessageLog(String message) {
-  // if (!menssagensLog.contains(message)) {
-  // menssagensLog.add(message);
-  // }
-  // }
-
-  // public List<String> getMessageLog() {
-  // return menssagensLog;
-  // }
-
-  /*
-   * ***************************************************************
-   * Metodo: getServidoresTCP
-   * Funcao: Retorna o conjunto de threads AtualizarServidores conectadas a
-   * servidores TCP conhecidos.
-   * Parametros: nenhum
-   * Retorno: Set<AtualizarServidores> - conjunto de threads responsáveis pela
-   * comunicação com servidores TCP
-   */
-  // public Set<AtualizarPeers> getPeersTCP() {
-  // return peerTCP;
-  // }
 
 }

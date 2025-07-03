@@ -2,10 +2,10 @@
 /* ***************************************************************
 * Autor: Hugo Botelho Santana
 * Matricula: 202210485
-* Inicio: 19/04/2025
-* Ultima alteracao: 23/04/2025
-* Nome: Programa de Chat/WhatZap com múltiplos servidores (conexões UDP e TCP)
-* Funcao: Aplicativo de chat para troca de mensagens com o modelo n clientes e n servidores
+* Inicio: 27/06/2025
+* Ultima alteracao: 03/07/2025
+* Nome: Programa de Chat P2P
+* Funcao: Aplicativo de chat para troca de mensagens no modelo Peer to Peer
 *************************************************************** */
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,9 +24,7 @@ import javafx.stage.Stage;
 public class Principal extends Application {
   private StackPane root = new StackPane(); // Usando StackPane para facilitar centralização
   private String nomeUsuario; // Nome do usuário conectado
-  private String ipServidor;
-  private GruposPeer gruposPeer; // Instância do cliente TCP
-  // private EnviarMensagemGrupo enviarMensagemGrupo; // Instância do cliente UDP
+  private GruposPeer gruposPeer; // Instância de cada Peer para enviar os JOINS e LEAVES TCP
   private static Set<String> peersConhecidos;
   private Set<GruposPeer> peersTCP;
   private Principal app;
@@ -57,7 +55,7 @@ public class Principal extends Application {
     // Configura o evento de encerramento do aplicativo
     primaryStage.setOnCloseRequest(t -> {
       // if (enviarMensagemGrupo != null) {
-      // enviarMensagemGrupo.fechar(); // Fecha o cliente UDP
+      // enviarMensagemGrupo.fechar();
       // }
       Platform.exit();
       System.exit(0);
@@ -72,86 +70,7 @@ public class Principal extends Application {
     // Centralizando o layout da TelaInicio
     root.setAlignment(telaInicio.getLayout(), javafx.geometry.Pos.CENTER);
 
-    // descobrirServidores = new DescobrirServidores(this);
-    // descobrirServidores.iniciarSincronizacao(); // descobre os servidores da rede
-    // e armazena em servidores conhecidos
-
   }
-
-  /*
-   * ***************************************************************
-   * Metodo: criarClientes
-   * Funcao: Cria as conexões TCP e UDP para o cliente com o IP do
-   * servidor.
-   * Parametros: String nomeUsuario - nome do usuário conectado.
-   * Retorno: void
-   */
-  // public void criarClientes(String nomeUsuario) {
-  // // this.ipServidor = ipServidor;
-  // this.nomeUsuario = nomeUsuario;
-
-  // if (ipServidor != null) {
-  // System.out.println("Cliente criado!");
-  // // Criando e conectando o cliente TCP
-  // gruposPeer = new GruposPeer(ipServidor, 6789, this);
-
-  // // Criando e conectando o cliente UDP
-  // criarClienteUDP(ipServidor, 6789);
-  // }
-  // }
-
-  /*
-   * ***************************************************************
-   * Metodo: criarClienteUDP
-   * Funcao: Inicializa o cliente UDP e atualiza o IP do servidor se
-   * necessário.
-   * Parametros: String ipServidor - IP do servidor, int porta - porta de
-   * conexão.
-   * Retorno: void
-   */
-  // public void iniciarEscutaDeMensagens(String ipServidor, int porta) {
-  // try {
-  // if (mensagensGrupoPeer != null) {
-  // mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servido r
-  // caso o usuario mude na tela de
-  // // configuracoes
-  // } else {
-  // mensagensGrupoPeer = new MensagensGruposPeer(ipServidor, porta); //
-  // Inicializa o cliente UDP
-  // }
-  // System.out.println("Cliente UDP criado e conectado ao servidor " + ipServidor
-  // + ":" + porta);
-  // iniciarThreadRecebimentoUDP(); // Inicia a thread para receber mensagens via
-  // UDP
-  // } catch (Exception e) {
-  // System.err.println("Erro ao criar ClienteUDP: " + e.getMessage());
-  // }
-  // }
-
-  /*
-   * ***************************************************************
-   * Metodo: iniciarThreadRecebimentoUDP
-   * Funcao: Cria e inicia uma thread para escutar mensagens recebidas
-   * via UDP.
-   * Parametros: sem parâmetros.
-   * Retorno: void
-   */
-  // private void iniciarThreadRecebimentoUDP() {
-  // new Thread(() -> {
-  // try {
-  // while (true) {
-  // String mensagemRecebida = mensagensGrupoPeer.receberMensagem(); // Aguarda
-  // mensagens do servidor
-  // System.out.println("Mensagem recebida via UDP: " + mensagemRecebida);
-
-  // // Criar uma thread para processar e renderizar a mensagem recebida
-  // new Thread(() -> processarMensagemRecebida(mensagemRecebida)).start();
-  // }
-  // } catch (Exception e) {
-  // System.err.println("Erro ao receber mensagem UDP: " + e.getMessage());
-  // }
-  // }).start();
-  // }
 
   /*
    * ***************************************************************
@@ -215,7 +134,7 @@ public class Principal extends Application {
   /*
    * ***************************************************************
    * Metodo: getClienteTCP
-   * Funcao: Retorna a instância do cliente TCP.
+   * Funcao: Retorna a instância do gruposPeer.
    * Parametros: sem parâmetros.
    * Retorno: ClienteTCP
    */
@@ -223,16 +142,6 @@ public class Principal extends Application {
     return gruposPeer;
   }
 
-  /*
-   * ***************************************************************
-   * Metodo: getClienteUDP
-   * Funcao: Retorna a instância do cliente UDP.
-   * Parametros: sem parâmetros.
-   * Retorno: ClienteUDP
-   */
-  // public EnviarMensagemGrupo getMensagensGruposPeer() {
-  // return enviarMensagemGrupo;
-  // }
   /*
    * ***************************************************************
    * Metodo: setNomeUsuario
@@ -253,30 +162,6 @@ public class Principal extends Application {
    */
   public String getNomeUsuario() {
     return nomeUsuario;
-  }
-
-  /*
-   * ***************************************************************
-   * Metodo: setIpServidor
-   * Funcao: Define o IP do servidor e atualiza a conexão UDP.
-   * Parametros: String ip - IP do servidor.
-   * Retorno: void
-   */
-  // public void setIpServidor(String ip) {
-  // this.ipServidor = ip;
-  // criarClienteUDP(ip, 6789); // so atualiza o ip do servidor do cliente UDP
-  // pois no tcp ja foi atualizado
-  // // quando caiu no catch e elegeu um novo servidor
-  // }
-  /*
-   * ***************************************************************
-   * Metodo: getIpServidor
-   * Funcao: Retorna o IP atual do servidor.
-   * Parametros: sem parâmetros.
-   * Retorno: String
-   */
-  public String getIpServidor() {
-    return ipServidor;
   }
 
   /*
@@ -326,7 +211,7 @@ public class Principal extends Application {
   /*
    * ***************************************************************
    * Metodo: getServidoresConhecidos
-   * Funcao: Retorna o conjunto de IPs dos servidores conhecidos.
+   * Funcao: Retorna o conjunto de IPs dos peers conhecidos.
    * Parametros: sem parâmetros.
    * Retorno: Set<String>
    */
@@ -351,9 +236,9 @@ public class Principal extends Application {
   /*
    * ***************************************************************
    * Metodo: setServidoresConhecidos
-   * Funcao: Adiciona um novo IP ao conjunto de servidores conhecidos e inicializa
+   * Funcao: Adiciona um novo IP ao conjunto de peers conhecidos e inicializa
    * conexões se necessário.
-   * Parametros: String novoServidor - IP do servidor a ser adicionado.
+   * Parametros: String novoServidor - IP do Peer a ser adicionado.
    * Retorno: void
    */
   public void setPeersConhecidos(String novoPeer) {

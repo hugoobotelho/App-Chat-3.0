@@ -18,9 +18,6 @@ public class TelaInicio {
         labelTitulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;");
         labelTitulo.setAlignment(Pos.CENTER);
 
-        // Configuração do Campo IP com Placeholder Persistente
-        // TextField campoIP = criarCampoComPlaceholder("Digite o IP do servidor");
-
         // Configuração do Campo Usuário com Placeholder Persistente
         TextField campoUsuario = criarCampoComPlaceholder("Digite seu nome de usuario");
 
@@ -43,17 +40,12 @@ public class TelaInicio {
             // String ipServidor = campoIP.getText().trim();
             String nomeUsuario = campoUsuario.getText().trim();
 
-            // Verifica se o IP do servidor e o nome de usuário estão preenchidos
+            // Verifica se o nome de usuário esta preenchido
             if (nomeUsuario.isEmpty()) {
                 mostrarMensagemErro("Preencha o nome.");
                 return;
             }
 
-            // Verifica se o IP do servidor tem formato válido (exemplo básico de IP)
-            // if (!isIPValido(ipServidor)) {
-            // mostrarMensagemErro("IP do servidor inválido.");
-            // return;
-            // }
 
             // Define os dados para a aplicação
             app.setNomeUsuario(nomeUsuario);

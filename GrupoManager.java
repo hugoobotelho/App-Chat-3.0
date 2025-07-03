@@ -18,38 +18,17 @@ public class GrupoManager {
    * Metodo: adicionarUsuario
    * Funcao: Adiciona um usuário a um grupo. Cria o grupo se ele ainda não
    * existir.
-   * Também envia APDU de "JOIN" para os servidores TCP conhecidos.
+   * Também envia APDU de "JOIN" para os Peers TCP conhecidos.
    * Parametros:
    * String nomeGrupo - nome do grupo
    * Usuario usuario - usuário que será adicionado
    * Retorno: void
    */
-  public synchronized void adicionarUsuario(String nomeGrupo, Usuario usuario, Boolean isUpdate) {
+  public synchronized void adicionarUsuario(String nomeGrupo, Usuario usuario) {
     grupos.computeIfAbsent(nomeGrupo, k -> new HashSet<>()).add(usuario);
     if (appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo) != null) {
       appPrincipal.getTelaMeusGrupos().getTelasChat().get(nomeGrupo).renderizarMensagens();
     }
-    // if (!isUpdate) {
-    // Set<AtualizarPeers> peers = app.getPeersTCP();
-    // if (peers != null) {
-    // List<AtualizarPeers> peerTCP = new ArrayList<>(peers);
-    // for (AtualizarPeers peer : peerTCP) {
-    // for (String message : app.getMessageLog()) {
-    // String[] partes = message.split("\\|");
-    // String tipo = partes[0].trim();
-    // String nomeUsuario = partes[1].trim();
-    // String nomeDoGrupo = partes[2].trim();
-    // String timeStamp = partes[3].trim();
-    // if (tipo.equals("JOIN")) {
-    // peer.enviarAPDUJoin(nomeUsuario, nomeDoGrupo, timeStamp);
-    // } else if (tipo.equals("LEAVE")) {
-    // peer.enviarAPDULeave(nomeUsuario, nomeDoGrupo, timeStamp);
-    // }
-    // }
-    // // servidor.enviarAPDUJoin(nomeGrupo, nomeGrupo);
-    // }
-    // }
-    // }
 
     imprimirGrupos();
 
@@ -60,7 +39,7 @@ public class GrupoManager {
    * Metodo: removerUsuario
    * Funcao: Remove um usuário de um grupo. Remove o grupo completamente se ele
    * ficar vazio.
-   * Também envia APDU de "LEAVE" para os servidores TCP conhecidos.
+   * Também envia APDU de "LEAVE" para os Peers TCP conhecidos.
    * Parametros:
    * String nomeGrupo - nome do grupo
    * Usuario usuario - usuário que será removido
