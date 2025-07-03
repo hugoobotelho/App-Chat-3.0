@@ -212,7 +212,7 @@ public class TelaChat {
         if (isOpen) {
           long totalNaoUnicas = historicoMensagens.getMensagens().stream()
               .filter(m -> !m.isRemove())
-              .filter(m -> !m.getVisualizacaoUnica())
+              // .filter(m -> !m.getVisualizacaoUnica())
               .count();
 
           if (totalNaoUnicas > mensagensJaVistas) {
