@@ -11,6 +11,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -250,9 +252,14 @@ public class TelaChat {
       nomeIntegrantes.setText(dadosMembros.toString());
 
       listaMensagens.getChildren().clear();
-      for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+      List<Mensagem> mensagensCopia = new ArrayList<>(historicoMensagens.getMensagens());
+      for (Mensagem mensagem : mensagensCopia) {
         listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
       }
+
+      // for (Mensagem mensagem : historicoMensagens.getMensagens()) {
+      //   listaMensagens.getChildren().add(criarComponenteMensagem(mensagem));
+      // }
       // Garante que o scroll só aconteça depois do layout estar renderizado
       // Platform.runLater(() -> {
       // scrollMensagens.setVvalue(1.0); // Scrolla para o fim
