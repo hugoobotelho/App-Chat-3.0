@@ -62,7 +62,17 @@ public class PeerTCP {
       try {
         entrada = new ObjectInputStream(conexao.getInputStream());
         while (true) {
-          String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do Peer
+          // String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do
+          // Peer
+
+          Object entradaBruta = entrada.readObject();
+          if (!(entradaBruta instanceof String)) {
+            System.err.println("Objeto recebido não é uma String válida. Ignorando.");
+            return;
+          }
+
+          String mensagemRecebida = (String) entradaBruta;
+          
           System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
           String resposta = processarMensagem(mensagemRecebida, conexao);
