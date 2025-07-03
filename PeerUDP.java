@@ -146,7 +146,7 @@ public class PeerUDP {
         String timeStamp = partes[4];
 
         // Verifica se a mensagem é do tipo SEND
-        if (tipoMensagem.equals("SEND")) {
+        if (tipoMensagem.equals("SEND") || tipoMensagem.equals("SENDUNIQUE")) {
           // Sincroniza para garantir consistência na manipulação de usuários
           Usuario remetente;
           synchronized (usuarios) {
@@ -166,9 +166,10 @@ public class PeerUDP {
           servidorSocket.send(pacoteResposta);
 
           app.processarMensagemRecebida(mensagemRecebida);
-        } else if (tipoMensagem.equals("SENDUNIQUE")) {
-          app.processarMensagemRecebida(mensagemRecebida);
-        }
+        } 
+        // else if (tipoMensagem.equals("SENDUNIQUE")) {
+        //   app.processarMensagemRecebida(mensagemRecebida);
+        // }
 
         else {
           System.err.println("Tipo de mensagem desconhecido: " + tipoMensagem);
