@@ -63,16 +63,18 @@ public class PeerTCP {
         entrada = new ObjectInputStream(conexao.getInputStream());
         while (true) {
           String mensagemRecebida = (String) entrada.readObject(); // Lê a mensagem do Peer
-          
+
           System.out.println("Mensagem recebida via TCP: " + mensagemRecebida);
 
-          String resposta = processarMensagem(mensagemRecebida, conexao);
+          new Thread(() -> {
+            String resposta = processarMensagem(mensagemRecebida, conexao);
+          }).start();
 
           // saida = new ObjectOutputStream(conexao.getOutputStream());
           // saida.writeObject(resposta); // Envia a resposta
           // saida.flush(); // Garante que a resposta será enviada ao Peer
         }
-      } catch (Exception e) {
+      } catch (EOFException | SocketException e) {
         System.err.println("Erro de I/O ao processar Peer:");
         e.printStackTrace();
 
@@ -104,6 +106,13 @@ public class PeerTCP {
         } catch (IOException ex) {
           System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
         }
+      } catch (IOException e) {
+        // Outros erros de IO, que podem ser queda ou problemas mais graves
+        System.err.println("Erro de I/O ao processar Peer: " + e.getMessage());
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
 
