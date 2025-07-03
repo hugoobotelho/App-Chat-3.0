@@ -73,6 +73,7 @@ public class PeerTCP {
         }
       } catch (Exception e) {
         System.err.println("Erro de I/O ao processar Peer: " + e.getMessage());
+        app.removePeerConhecido(conexao.getInetAddress().getHostAddress());
 
         System.out.println("Vai remover o usuario de endereco: " + conexao.getInetAddress().getHostAddress());
         System.out.println("Os peers conhecidos sao: " + app.getPeersConhecidos());
@@ -84,7 +85,7 @@ public class PeerTCP {
               if (app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress()
                   .equals(conexao.getInetAddress().getHostAddress())) {
                 System.out.println("Vai chamar a funcao remover usuario de todos os grupos: " + nomeUsuario);
-                app.removePeerConhecido(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
+                // app.removePeerConhecido(app.getPeer().getUsuarios().get(nomeUsuario).getEndereco().getHostAddress());
                 grupoManager.removerUsuarioTodosGrupos(nomeUsuario);
               }
             }
