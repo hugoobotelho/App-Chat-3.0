@@ -112,7 +112,7 @@ public class Principal extends Application {
   // public void iniciarEscutaDeMensagens(String ipServidor, int porta) {
   // try {
   // if (mensagensGrupoPeer != null) {
-  // mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servidor
+  // mensagensGrupoPeer.setIpServidor(ipServidor); // atualiza o ip do servido r
   // caso o usuario mude na tela de
   // // configuracoes
   // } else {
